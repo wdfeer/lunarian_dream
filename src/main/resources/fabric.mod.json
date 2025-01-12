@@ -1,0 +1,44 @@
+{
+	"schemaVersion": 1,
+	"id": "lunatic",
+	"version": "${version}",
+	"name": "Lunatic Kingdom",
+	"description": "Dream World from Touhou 15 ~ Legacy of Lunatic Kingdom",
+	"authors": [
+		"wdfeer"
+	],
+	"contact": {
+		"sources": "https://github.com/wdfeer/lunatic"
+	},
+	"license": "GPL-3.0",
+	"icon": "assets/lunatic/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			{
+				"value": "wdfeer.lunatic.Lunatic",
+				"adapter": "kotlin"
+			}
+		],
+		"client": [
+			{
+				"value": "wdfeer.lunatic.LunaticClient",
+				"adapter": "kotlin"
+			}
+		]
+	},
+	"mixins": [
+		"lunatic.mixins.json",
+		{
+			"config": "lunatic.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.16.10",
+		"minecraft": "~1.21.4",
+		"java": ">=21",
+		"fabric-api": "*",
+		"fabric-language-kotlin": "*"
+	}
+}
