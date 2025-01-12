@@ -1,0 +1,17 @@
+{
+  "type": "lunatic:dream_world",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "biome": "draft:draft",
+      "lakes": false,
+      "features": false,
+      "layers": [
+        {
+          "height": 0,
+          "block": "minecraft:barrier"
+        }
+      ]
+    }
+  }
+}
