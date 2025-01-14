@@ -3,12 +3,12 @@
   "generator": {
     "type": "minecraft:flat",
     "settings": {
-      "biome": "draft:draft",
+      "biome": "lunatic:dream_biome",
       "lakes": false,
       "features": false,
       "layers": [
         {
-          "height": 0,
+          "height": 4,
           "block": "minecraft:barrier"
         }
       ]
