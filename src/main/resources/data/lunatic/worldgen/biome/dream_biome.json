@@ -14,5 +14,7 @@
   "spawners": {},
   "spawn_costs": {},
   "carvers": [],
-  "features": []
+  "features": [
+    "lunatic:dream_world_grid"
+  ]
 }

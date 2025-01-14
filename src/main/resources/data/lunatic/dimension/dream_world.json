@@ -5,7 +5,7 @@
     "settings": {
       "biome": "lunatic:dream_biome",
       "lakes": false,
-      "features": false,
+      "features": true,
       "layers": [
         {
           "height": 4,
