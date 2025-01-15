@@ -49,8 +49,7 @@ private fun Lunatic.initializeTeleportation() =
         return@register if (entity.isSleeping) {
             val dreamWorld =
                 entity.server.getWorld(RegistryKey.of(RegistryKeys.WORLD, Identifier.of(MOD_ID, DREAM_WORLD_PATH)))
-            entity.teleportTo(TeleportTarget(dreamWorld, entity) {})
-            entity.health = entity.maxHealth
+            entity.teleportTo(TeleportTarget(dreamWorld, entity) { it.setPos(it.x, 5.0, it.z) })
             false
         } else if (entity.world.registryKey.value.path == DREAM_WORLD_PATH) {
             entity.teleportTo(TeleportTarget(entity.server.overworld, entity) {})
