@@ -3,6 +3,7 @@ package wdfeer.lunatic
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
+import net.minecraft.block.Block
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.damage.DamageSource
 import net.minecraft.registry.Registries
@@ -23,7 +24,7 @@ fun Lunatic.initializeDreamWorld() {
 }
 
 private fun Lunatic.initializeFeatures() {
-    class DreamWorldFeatureConfig(blockId: Identifier) : FeatureConfig {
+    class DreamWorldFeatureConfig(val blockId: Identifier) : FeatureConfig {
         val codec = RecordCodecBuilder.create {
             it.group(
                 Identifier.CODEC.fieldOf("blockId").forGetter { blockId }).apply(it, ::DreamWorldFeatureConfig)
@@ -32,7 +33,13 @@ private fun Lunatic.initializeFeatures() {
 
     class GridFeature(configCodec: Codec<DreamWorldFeatureConfig>) : Feature<DreamWorldFeatureConfig>(configCodec) {
         override fun generate(context: FeatureContext<DreamWorldFeatureConfig>): Boolean {
-            TODO("Not yet implemented")
+            val world = context.world
+            val origin = context.origin
+            val block = Registries.BLOCK[context.config.blockId]
+            repeat(8) {
+                world.setBlockState(origin.up(it), block.defaultState, Block.FORCE_STATE)
+            }
+            return true
         }
     }
 

@@ -1,0 +1,6 @@
+{
+  "type": "lunatic:dream_world_grid",
+  "config": {
+    "blockId": "minecraft:bedrock"
+  }
+}

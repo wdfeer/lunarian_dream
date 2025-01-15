@@ -15,6 +15,24 @@
   "spawn_costs": {},
   "carvers": [],
   "features": [
-    "lunatic:dream_world_grid"
+    [{
+      "feature": "lunatic:dream_world_grid",
+      "placement": [
+        {
+          "type": "minecraft:count",
+          "count": 1
+        },
+        {
+          "type": "minecraft:in_square"
+        },
+        {
+          "type": "minecraft:heightmap",
+          "heightmap": "WORLD_SURFACE"
+        },
+        {
+          "type": "minecraft:biome"
+        }
+      ]
+    }]
   ]
 }
