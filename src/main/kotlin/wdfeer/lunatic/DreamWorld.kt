@@ -36,14 +36,13 @@ private fun Lunatic.initializeFeatures() {
             val world = context.world
             val origin = context.origin
             val block = Registries.BLOCK[context.config.blockId]
-            repeat(8) {
-                world.setBlockState(origin.up(it), block.defaultState, Block.FORCE_STATE)
-            }
+            repeat(16) { world.setBlockState(origin.west(it), block.defaultState, Block.FORCE_STATE) }
+            repeat(15) { world.setBlockState(origin.north(it + 1), block.defaultState, Block.FORCE_STATE) }
             return true
         }
     }
 
-    val config = DreamWorldFeatureConfig(Identifier.ofVanilla("bedrock"))
+    val config = DreamWorldFeatureConfig(Identifier.ofVanilla("obsidian"))
     val gridFeature = GridFeature(config.codec)
     Registry.register(Registries.FEATURE, Identifier.of(MOD_ID, "dream_world_grid"), gridFeature)
 }
