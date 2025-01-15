@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
 import net.minecraft.block.Block
+import net.minecraft.block.Blocks
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.damage.DamageSource
 import net.minecraft.registry.Registries
@@ -12,7 +13,6 @@ import net.minecraft.registry.RegistryKey
 import net.minecraft.registry.RegistryKeys
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
-import net.minecraft.world.TeleportTarget
 import net.minecraft.world.gen.feature.Feature
 import net.minecraft.world.gen.feature.FeatureConfig
 import net.minecraft.world.gen.feature.util.FeatureContext
@@ -42,7 +42,7 @@ private fun Lunatic.initializeFeatures() {
         }
     }
 
-    val config = DreamWorldFeatureConfig(Identifier.ofVanilla("obsidian"))
+    val config = DreamWorldFeatureConfig(Registries.BLOCK.getId(Blocks.OBSIDIAN))
     val gridFeature = GridFeature(config.codec)
     Registry.register(Registries.FEATURE, Identifier.of(MOD_ID, "dream_world_grid"), gridFeature)
 }
@@ -55,10 +55,10 @@ private fun Lunatic.initializeTeleportation() =
         return@register if (entity.isSleeping) {
             val dreamWorld =
                 entity.server.getWorld(RegistryKey.of(RegistryKeys.WORLD, Identifier.of(MOD_ID, DREAM_WORLD_PATH)))
-            entity.teleportTo(TeleportTarget(dreamWorld, entity) { it.setPos(it.x, 5.0, it.z) })
+            entity.moveToWorld(dreamWorld)
             false
         } else if (entity.world.registryKey.value.path == DREAM_WORLD_PATH) {
-            entity.teleportTo(TeleportTarget(entity.server.overworld, entity) {})
+            entity.moveToWorld(entity.server.overworld)
             false
         } else true
     }
