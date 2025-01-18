@@ -68,7 +68,7 @@ private fun Lunatic.initializeTeleportation() =
             entity.clearSleepingPosition()
             ChunkSectionPos.from(dreamWorld.getChunk(0, 0)).minPos.let {
                 // Teleport on the grid
-                entity.teleport(dreamWorld, it.x.toDouble() + 1, 40.0, it.z.toDouble() + 1, 0f, 0f)
+                entity.teleport(dreamWorld, it.x.toDouble() + 1, dreamWorld.topY - 80.0, it.z.toDouble() + 1, 0f, 0f)
             }
             false
         } else if (entity.world.registryKey.value.path == DREAM_WORLD_PATH) {
