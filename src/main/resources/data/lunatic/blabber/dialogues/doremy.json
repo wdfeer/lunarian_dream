@@ -1,0 +1,31 @@
+{
+  "states": {
+    "start": {
+      "text": "What do you want, human?",
+      "choices": [
+        {
+          "next": "death",
+          "text": "How do i go home?"
+        },
+        {
+          "next": "death",
+          "text": "[Attack her]"
+        }
+      ],
+      "type": "default"
+    },
+    "death": {
+      "text": "",
+      "type": "end_dialogue",
+      "action": {
+        "type": "blabber:command",
+        "value": "/kill @s"
+      }
+    }
+  },
+  "layout": {
+    "type": "blabber:classic"
+  },
+  "unskippable": true,
+  "start_at": "start"
+}

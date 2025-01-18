@@ -16,6 +16,7 @@ import net.minecraft.world.TeleportTarget
 import net.minecraft.world.gen.feature.Feature
 import net.minecraft.world.gen.feature.FeatureConfig
 import net.minecraft.world.gen.feature.util.FeatureContext
+import org.ladysnake.blabber.Blabber
 
 const val DREAM_WORLD_PATH = "dream_world"
 fun Lunatic.initializeDreamWorld() {
@@ -56,6 +57,7 @@ private fun Lunatic.initializeTeleportation() =
             val dreamWorld =
                 entity.server.getWorld(RegistryKey.of(RegistryKeys.WORLD, Identifier.of(MOD_ID, DREAM_WORLD_PATH)))
             entity.teleportTo(TeleportTarget(dreamWorld, entity) { it.setPos(it.x, 5.0, it.z) })
+            Blabber.startDialogue(entity, Identifier.of(MOD_ID, "doremy"))
             false
         } else if (entity.world.registryKey.value.path == DREAM_WORLD_PATH) {
             entity.teleportTo(TeleportTarget(entity.server.overworld, entity) {})
