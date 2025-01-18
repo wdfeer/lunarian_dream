@@ -3,6 +3,7 @@ package wdfeer.lunatic
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.block.Block
 import net.minecraft.block.Blocks
 import net.minecraft.entity.LivingEntity
@@ -11,17 +12,21 @@ import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
 import net.minecraft.registry.RegistryKey
 import net.minecraft.registry.RegistryKeys
+import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.ChunkSectionPos
 import net.minecraft.world.gen.feature.Feature
 import net.minecraft.world.gen.feature.FeatureConfig
 import net.minecraft.world.gen.feature.util.FeatureContext
+import wdfeer.lunatic.Lunatic.MOD_ID
 
 const val DREAM_WORLD_PATH = "dream_world"
 fun Lunatic.initializeDreamWorld() {
     initializeFeatures()
     initializeTeleportation()
+    initializeDoremy()
 }
 
 private fun Lunatic.initializeFeatures() {
@@ -58,21 +63,43 @@ private fun Lunatic.initializeTeleportation() =
         if (amount < entity.health) return@register true
 
         return@register if (entity.isSleeping) {
-            val dreamWorld = entity.server.getWorld(
-                RegistryKey.of(
-                    RegistryKeys.WORLD,
-                    Identifier.of(MOD_ID, DREAM_WORLD_PATH)
-                )
-            )!! // Dream World must be registered
+            val server = entity.server
+            val dreamWorld = server.getDreamWorld()
 
             entity.clearSleepingPosition()
             ChunkSectionPos.from(dreamWorld.getChunk(0, 0)).minPos.let {
                 // Teleport on the grid
                 entity.teleport(dreamWorld, it.x.toDouble() + 1, dreamWorld.topY - 80.0, it.z.toDouble() + 1, 0f, 0f)
             }
+
+
             false
         } else if (entity.world.registryKey.value.path == DREAM_WORLD_PATH) {
             entity.teleport(entity.server.overworld, 0.0, 256.0, 0.0, 0f, 0f)
             false
         } else true
     }
+
+private fun Lunatic.initializeDoremy() =
+    ServerTickEvents.START_SERVER_TICK.register {
+        if (it.ticks % 20 != 0) return@register
+
+        val world = it.getDreamWorld()
+
+        // Spawn doremy if she is not there
+        if (world.isChunkLoaded(0, 0) &&
+            world.iterateEntities().none { it.displayName.string == "Doremy Sweet" }
+        ) {
+            it.commandManager.executeWithPrefix(
+                it.commandSource,
+                "/easy_npc preset import default lunatic:default_preset/humanoid_slim/doremy.npc.nbt"
+            )
+        }
+    }
+
+private fun MinecraftServer.getDreamWorld(): ServerWorld = getWorld(
+    RegistryKey.of(
+        RegistryKeys.WORLD,
+        Identifier.of(MOD_ID, DREAM_WORLD_PATH)
+    )
+)!! // Must be registered
