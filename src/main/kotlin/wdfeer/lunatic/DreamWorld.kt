@@ -13,6 +13,7 @@ import net.minecraft.registry.RegistryKey
 import net.minecraft.registry.RegistryKeys
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
+import net.minecraft.util.math.ChunkSectionPos
 import net.minecraft.world.gen.feature.Feature
 import net.minecraft.world.gen.feature.FeatureConfig
 import net.minecraft.world.gen.feature.util.FeatureContext
@@ -36,8 +37,12 @@ private fun Lunatic.initializeFeatures() {
             val world = context.world
             val origin = context.origin
             val block = Registries.BLOCK[context.config.blockId]
-            repeat(16) { world.setBlockState(origin.west(it), block.defaultState, Block.FORCE_STATE) }
-            repeat(15) { world.setBlockState(origin.north(it + 1), block.defaultState, Block.FORCE_STATE) }
+
+            for (y in origin.y..world.topY step 16) {
+                val pos = origin.up(y)
+                repeat(16) { world.setBlockState(pos.west(it), block.defaultState, Block.FORCE_STATE) }
+                repeat(15) { world.setBlockState(pos.north(it + 1), block.defaultState, Block.FORCE_STATE) }
+            }
             return true
         }
     }
@@ -53,10 +58,18 @@ private fun Lunatic.initializeTeleportation() =
         if (amount < entity.health) return@register true
 
         return@register if (entity.isSleeping) {
-            val dreamWorld =
-                entity.server.getWorld(RegistryKey.of(RegistryKeys.WORLD, Identifier.of(MOD_ID, DREAM_WORLD_PATH)))
+            val dreamWorld = entity.server.getWorld(
+                RegistryKey.of(
+                    RegistryKeys.WORLD,
+                    Identifier.of(MOD_ID, DREAM_WORLD_PATH)
+                )
+            )!! // Dream World must be registered
+
             entity.clearSleepingPosition()
-            entity.teleport(dreamWorld, 0.0, 5.0, 0.0, 0f, 0f)
+            ChunkSectionPos.from(dreamWorld.getChunk(0, 0)).minPos.let {
+                // Teleport on the grid
+                entity.teleport(dreamWorld, it.x.toDouble() + 1, 40.0, it.z.toDouble() + 1, 0f, 0f)
+            }
             false
         } else if (entity.world.registryKey.value.path == DREAM_WORLD_PATH) {
             entity.teleport(entity.server.overworld, 0.0, 256.0, 0.0, 0f, 0f)

@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory
 
 object Lunatic : ModInitializer {
     const val MOD_ID = "lunatic"
-    private val logger = LoggerFactory.getLogger("lunatic")
+    val logger = LoggerFactory.getLogger("lunatic")
 
     override fun onInitialize() {
         initializeDreamWorld()
