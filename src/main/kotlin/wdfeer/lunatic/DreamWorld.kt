@@ -91,7 +91,7 @@ private fun Lunatic.initializeDoremy() =
             world.iterateEntities().none { it.displayName.string == "Doremy Sweet" }
         ) {
             it.commandManager.executeWithPrefix(
-                it.commandSource,
+                it.commandSource.withSilent(),
                 "/easy_npc preset import default lunatic:default_preset/humanoid_slim/doremy.npc.nbt"
             )
         }
