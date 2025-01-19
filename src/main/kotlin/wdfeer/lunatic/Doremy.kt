@@ -5,18 +5,16 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityDimensions
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.SpawnGroup
-import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
 import net.minecraft.resource.featuretoggle.FeatureSet
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
-import net.minecraft.util.ActionResult
-import net.minecraft.util.Hand
 import net.minecraft.util.Identifier
 import net.minecraft.world.World
 import org.ladysnake.blabber.Blabber
+import java.util.*
 
 fun Lunatic.initializeDoremyEntity() {
     Registry.register(Registries.ENTITY_TYPE, Identifier.of(MOD_ID, "doremy"), DoremyEntityType)
@@ -32,21 +30,27 @@ class Doremy(world: World) : Entity(DoremyEntityType, world) {
     override fun readCustomDataFromNbt(nbt: NbtCompound?) {}
     override fun writeCustomDataToNbt(nbt: NbtCompound?) {}
 
-    // FIXME this doesn't run on right-click for some reason
-    override fun interact(player: PlayerEntity?, hand: Hand?): ActionResult {
-        return if (player is ServerPlayerEntity) {
-            Blabber.startDialogue(player, Identifier.of(Lunatic.MOD_ID, "doremy"))
-            ActionResult.SUCCESS
-        } else super.interact(player, hand)
-    }
-
-    // TODO: workaround for the rightclick not working
+    private val playersTalkingTo = mutableListOf<Pair<UUID, Long>>()
     override fun tick() {
-        if ((world.time % 60).toInt() == 0)
-            world.players.forEach { player ->
-                if (player is ServerPlayerEntity && player.distanceTo(this) < 6)
-                    Blabber.startDialogue(player, Identifier.of(Lunatic.MOD_ID, "doremy"))
-            }
+        if ((world.time % 20).toInt() == 0) {
+            world.players.filterIsInstance<ServerPlayerEntity>()
+                .filter { it.distanceTo(this) < 6 }
+                .filter {
+                    // Looking at doremy
+                    it.rotationVector.normalize().subtract(eyePos.subtract(it.eyePos).normalize()).length() < 0.1
+                }
+                .filter { player ->
+                    playersTalkingTo.none { it.first == player.uuid }
+                }
+                .forEach {
+                    Blabber.startDialogue(it, Identifier.of(Lunatic.MOD_ID, "doremy"))
+                    playersTalkingTo += it.uuid to world.time
+                }
+
+            playersTalkingTo.removeIf { world.time - it.second > 240 }
+        }
+
+
         super.tick()
     }
 }
