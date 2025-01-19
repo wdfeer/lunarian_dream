@@ -8,6 +8,7 @@ import net.minecraft.block.Block
 import net.minecraft.block.Blocks
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.damage.DamageSource
+import net.minecraft.network.packet.s2c.play.PositionFlag
 import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
 import net.minecraft.registry.RegistryKey
@@ -69,7 +70,15 @@ private fun Lunatic.initializeTeleportation() =
             entity.clearSleepingPosition()
             ChunkSectionPos.from(dreamWorld.getChunk(0, 0)).minPos.let {
                 // Teleport on the grid
-                entity.teleport(dreamWorld, it.x.toDouble() + 1, 40.0, it.z.toDouble() + 1, 0f, 0f)
+                entity.teleport(
+                    dreamWorld,
+                    it.x.toDouble() + 1,
+                    40.0,
+                    it.z.toDouble() + 1,
+                    setOf(PositionFlag.X, PositionFlag.Y, PositionFlag.Z),
+                    0f,
+                    0f
+                )
             }
 
 
