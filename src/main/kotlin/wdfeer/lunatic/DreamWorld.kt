@@ -81,19 +81,15 @@ private fun Lunatic.initializeTeleportation() =
     }
 
 private fun Lunatic.initializeDoremy() =
-    ServerTickEvents.START_SERVER_TICK.register {
-        if (it.ticks % 20 != 0) return@register
+    ServerTickEvents.START_SERVER_TICK.register { server ->
+        if (server.ticks % 20 != 0) return@register
 
-        val world = it.getDreamWorld()
+        val world = server.getDreamWorld()
+        val noDoremy = world.iterateEntities().none { it.displayName.string == "Doremy Sweet" }
 
         // Spawn doremy if she is not there
-        if (world.isChunkLoaded(0, 0) &&
-            world.iterateEntities().none { it.displayName.string == "Doremy Sweet" }
-        ) {
-            it.commandManager.executeWithPrefix(
-                it.commandSource.withSilent().withWorld(world),
-                "/easy_npc preset import default lunatic:default_preset/humanoid_slim/doremy.npc.nbt"
-            )
+        if (world.isChunkLoaded(0, 0) && noDoremy) {
+            world.spawnEntity(Doremy(world))
         }
     }
 
