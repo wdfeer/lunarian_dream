@@ -33,6 +33,6 @@
 		"java": ">=17",
 		"fabric-api": "*",
 		"fabric-language-kotlin": "*",
-		"blabber": ">=1.6.1"
+		"blabber": "*"
 	}
 }

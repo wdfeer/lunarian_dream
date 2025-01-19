@@ -1,0 +1,53 @@
+{
+  "states": {
+    "start": {
+      "text": "What do you want, human?",
+      "choices": [
+        {
+          "next": "explain_dream_world",
+          "text": "What is this place?"
+        },
+        {
+          "next": "explain_doremy",
+          "text": "Who are you?"
+        },
+        {
+          "next": "go_home",
+          "text": "Can you teleport me home?"
+        }
+      ]
+    },
+    "explain_dream_world": {
+      "text": "This is the Dream World, where dreams turn real—and nightmares do too. Tread carefully, or you'll never wake.",
+      "type": "default",
+      "choices": [
+        {
+          "next": "start",
+          "text": "I see."
+        }
+      ]
+    },
+    "explain_doremy": {
+      "text": "I’m Doremy Sweet, the guardian of the Dream World. Here, I ensure dreams flow—and don’t consume you.",
+      "choices": [
+        {
+          "next": "start",
+          "text": "I see."
+        }
+      ]
+    },
+    "go_home": {
+      "text": "",
+      "type": "end_dialogue",
+      "action": {
+        "type": "blabber:command",
+        "value": "/execute in minecraft:overworld run tp @s ~ 90 ~"
+      }
+    }
+  },
+  "layout": {
+    "type": "blabber:rpg"
+  },
+  "unskippable": false,
+  "start_at": "start"
+}
