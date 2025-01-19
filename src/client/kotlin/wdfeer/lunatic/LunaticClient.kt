@@ -1,9 +1,10 @@
 package wdfeer.lunatic
 
 import net.fabricmc.api.ClientModInitializer
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry
 
 object LunaticClient : ClientModInitializer {
-	override fun onInitializeClient() {
-		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
-	}
+    override fun onInitializeClient() {
+        EntityRendererRegistry.register(DoremyEntityType, ::DoremyRenderer)
+    }
 }

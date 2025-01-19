@@ -6,9 +6,16 @@ import net.minecraft.entity.EntityDimensions
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.SpawnGroup
 import net.minecraft.nbt.NbtCompound
+import net.minecraft.registry.Registries
+import net.minecraft.registry.Registry
 import net.minecraft.resource.featuretoggle.FeatureSet
 import net.minecraft.text.Text
+import net.minecraft.util.Identifier
 import net.minecraft.world.World
+
+fun Lunatic.initializeDoremyEntity() {
+    Registry.register(Registries.ENTITY_TYPE, Identifier.of(MOD_ID, "doremy"), DoremyEntityType)
+}
 
 class Doremy(world: World) : Entity(DoremyEntityType, world) {
     init {
