@@ -14,11 +14,14 @@ base {
 }
 
 repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
+	maven {
+		name = "Ladysnake Mods"
+		url = "https://maven.ladysnake.org/releases"
+	}
+	maven {
+		name = "Nexus Repository Manager"
+		url = "https://oss.sonatype.org/content/repositories/snapshots"
+	}
 }
 
 loom {
@@ -42,6 +45,13 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
+
+	// Blabber
+	modImplementation "org.ladysnake:blabber:${blabber_version}"
+	include "org.ladysnake:blabber:${blabber_version}"
+	include "me.lucko:fabric-permissions-api:${fpa_version}"
+	include "dev.onyxstudios.cardinal-components-api:cardinal-components-base:${cca_version}"
+	include "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${cca_version}"
 }
 
 processResources {
