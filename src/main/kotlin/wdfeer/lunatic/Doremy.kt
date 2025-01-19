@@ -20,7 +20,7 @@ fun Lunatic.initializeDoremyEntity() {
 class Doremy(world: World) : Entity(DoremyEntityType, world) {
     init {
         customName = Text.literal("Doremy Sweet")
-        setPos(0.5, 216.0, 0.5)
+        setPos(0.5, 217.0, 0.5)
     }
 
     override fun initDataTracker() {}
