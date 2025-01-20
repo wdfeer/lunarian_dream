@@ -16,7 +16,7 @@
   "features": [
     [
       {
-        "feature": "lunatic:dream_world_grid",
+        "feature": "lunatic:dream_grid",
         "placement": [
           {
             "type": "minecraft:count",

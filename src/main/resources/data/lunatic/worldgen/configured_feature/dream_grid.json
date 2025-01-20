@@ -1,5 +1,5 @@
 {
-  "type": "lunatic:dream_world_grid",
+  "type": "lunatic:dream_grid",
   "config": {
     "blockId": "minecraft:obsidian"
   }
