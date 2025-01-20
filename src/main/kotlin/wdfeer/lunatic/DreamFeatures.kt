@@ -109,7 +109,7 @@ class DungeonFeature :
     private fun DungeonGenerator.createSpawners() {
         val entityTypes = listOf(
             EntityType.PHANTOM to EntityType.SHULKER,
-            EntityType.BLAZE to EntityType.MAGMA_CUBE,
+            EntityType.PHANTOM to EntityType.MAGMA_CUBE
         ).random()
         repeat(6) {
             val entityType = if (it % 2 == 0) entityTypes.first else entityTypes.second
