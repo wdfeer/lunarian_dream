@@ -72,7 +72,7 @@ private fun initializeDoremy() =
         }
     }
 
-private fun MinecraftServer.getDreamWorld(): ServerWorld = getWorld(
+fun MinecraftServer.getDreamWorld(): ServerWorld = getWorld(
     RegistryKey.of(
         RegistryKeys.WORLD,
         Identifier.of(MOD_ID, DREAM_WORLD_PATH)
