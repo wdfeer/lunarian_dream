@@ -4,6 +4,8 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.damage.DamageSource
+import net.minecraft.entity.effect.StatusEffectInstance
+import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.network.packet.s2c.play.PositionFlag
 import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
@@ -54,7 +56,8 @@ private fun initializeTeleportation() =
 
             false
         } else if (entity.world.registryKey.value.path == DREAM_WORLD_PATH) {
-            entity.teleport(entity.server.overworld, 0.0, 256.0, 0.0, 0f, 0f)
+            entity.teleport(entity.server.overworld, entity.x, 256.0, entity.z, 0f, 0f)
+            entity.addStatusEffect(StatusEffectInstance(StatusEffects.WITHER))
             false
         } else true
     }
