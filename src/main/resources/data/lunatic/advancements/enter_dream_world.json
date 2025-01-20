@@ -1,0 +1,18 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:magenta_bed"
+    },
+    "title": "Sweet Dreams Turned Reality",
+    "description": "Die in a bed to enter the Dream World and leave the mundane behind."
+  },
+  "criteria": {
+    "enter_dream_world": {
+      "trigger": "minecraft:changed_dimension",
+      "conditions": {
+        "to": "lunatic:dream_world"
+      }
+    }
+  },
+  "requirements": []
+}

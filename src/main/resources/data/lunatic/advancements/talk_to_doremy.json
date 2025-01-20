@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:cake"
+    },
+    "title": "Dream Courier",
+    "description": "Speak with Doremy Sweet, the guardian of dreams and nightmares.",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "lunatic:enter_dream_world",
+  "criteria": {
+    "talk_to_doremy": {
+      "trigger": "minecraft:player_interacted_with_entity",
+      "conditions": {
+        "entity": {
+          "type": "lunatic:doremy"
+        }
+      }
+    }
+  },
+  "requirements": []
+}
