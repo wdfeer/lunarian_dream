@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.block.Block
 import net.minecraft.block.Blocks
+import net.minecraft.block.entity.ChestBlockEntity
 import net.minecraft.block.entity.MobSpawnerBlockEntity
 import net.minecraft.entity.EntityType
 import net.minecraft.registry.Registries
@@ -97,7 +98,21 @@ class DungeonFeature() :
             world.setBlockState(spawnerPos, Blocks.SPAWNER.defaultState, Block.FORCE_STATE)
             val blockEntity = world.getBlockEntity(spawnerPos)
             if (blockEntity is MobSpawnerBlockEntity) {
-                blockEntity.setEntityType(entityType, net.minecraft.util.math.random.Random.create())
+                blockEntity.setEntityType(entityType, world.random)
+            }
+        }
+
+        // Add chests with loot
+        repeat(2) {
+            val chestPos = origin
+                .up()
+                .east(Random.nextInt(2 until size - 1))
+                .north(Random.nextInt(2 until size - 1))
+            world.setBlockState(chestPos, Blocks.CHEST.defaultState, Block.FORCE_STATE)
+            val blockEntity = world.getBlockEntity(chestPos)
+            if (blockEntity is ChestBlockEntity) {
+                val lootTableId = Identifier(Lunatic.MOD_ID, "chests/dream_dungeon_treasure")
+                blockEntity.setLootTable(lootTableId, world.random.nextLong())
             }
         }
 
