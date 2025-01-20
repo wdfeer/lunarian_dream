@@ -1,0 +1,6 @@
+{
+  "type": "lunatic:dream_dungeon",
+  "config": {
+    "outer_block": "minecraft:bedrock"
+  }
+}
