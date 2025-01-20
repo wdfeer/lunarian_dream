@@ -6,12 +6,19 @@ import net.minecraft.block.Block
 import net.minecraft.block.Blocks
 import net.minecraft.block.entity.ChestBlockEntity
 import net.minecraft.block.entity.MobSpawnerBlockEntity
+import net.minecraft.enchantment.Enchantments
 import net.minecraft.entity.EntityType
+import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.attribute.EntityAttributeModifier
 import net.minecraft.entity.attribute.EntityAttributes
+import net.minecraft.entity.effect.StatusEffectInstance
+import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.entity.mob.HostileEntity
+import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
 import net.minecraft.registry.Registries
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.util.Hand
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.ChunkRegion
@@ -62,13 +69,14 @@ class DungeonFeature :
 
     override fun generate(context: FeatureContext<DungeonFeatureConfig>): Boolean {
         if (context.origin.let { it.x.absoluteValue + it.z.absoluteValue } < 64) return false
+        if (Random.nextFloat() > 0.1f) return false
         val origin = context.origin.withY((16 until context.world.topY step 16).toList().random())
 
         val generator = DungeonGenerator(context.world, origin, context.config)
         generator.createHollowCube()
         generator.createSpawners()
         generator.createChests()
-        generator.createBoss()
+        repeat(2) { generator.createBoss() }
 
         return true
     }
@@ -109,7 +117,7 @@ class DungeonFeature :
     private fun DungeonGenerator.createSpawners() {
         val entityTypes = listOf(
             EntityType.PHANTOM to EntityType.SHULKER,
-            EntityType.PHANTOM to EntityType.MAGMA_CUBE
+            EntityType.PHANTOM to EntityType.MAGMA_CUBE,
         ).random()
         repeat(6) {
             val entityType = if (it % 2 == 0) entityTypes.first else entityTypes.second
@@ -137,13 +145,13 @@ class DungeonFeature :
     private fun DungeonGenerator.createBoss() {
         val bossPos =
             origin.up(2).east(Random.nextInt(2 until SIZE - 1)).north(Random.nextInt(2 until SIZE - 1)).toCenterPos()
-        val entityType = when (Random.nextInt(4)) {
-            0 -> EntityType.SKELETON
-            1 -> EntityType.ZOMBIE
-            2 -> EntityType.BLAZE
-            3 -> EntityType.PIGLIN_BRUTE
-            else -> return
-        }
+        val entityType = listOf(
+            EntityType.SKELETON,
+            EntityType.WITHER_SKELETON,
+            EntityType.ZOMBIE,
+            EntityType.ZOMBIE_VILLAGER,
+            EntityType.BLAZE
+        ).random()
 
         val entity: HostileEntity = when (worldAccess) {
             is ServerWorld -> entityType.create(worldAccess) ?: return
@@ -153,8 +161,52 @@ class DungeonFeature :
         }
         entity.setPosition(bossPos)
 
+        // Equip items or add status effect to blazes
+        when {
+            entityType == EntityType.SKELETON -> entity.setStackInHand(Hand.MAIN_HAND, ItemStack(Items.BOW).apply {
+                addEnchantment(Enchantments.PUNCH, 1)
+                addEnchantment(Enchantments.FLAME, 0)
+                addAttributeModifier(
+                    EntityAttributes.GENERIC_MOVEMENT_SPEED,
+                    EntityAttributeModifier(
+                        "dream_world_skeleton_bow_speed",
+                        0.05,
+                        EntityAttributeModifier.Operation.MULTIPLY_BASE
+                    ),
+                    EquipmentSlot.MAINHAND
+                )
+            })
+
+            entityType != EntityType.BLAZE -> entity.setStackInHand(
+                Hand.MAIN_HAND,
+                ItemStack(Items.DIAMOND_AXE).apply {
+                    addEnchantment(Enchantments.KNOCKBACK, 1)
+                    addEnchantment(Enchantments.SHARPNESS, 4)
+                    addAttributeModifier(
+                        EntityAttributes.GENERIC_MOVEMENT_SPEED,
+                        EntityAttributeModifier(
+                            "dream_world_axe_speed",
+                            0.05,
+                            EntityAttributeModifier.Operation.MULTIPLY_BASE
+                        ),
+                        EquipmentSlot.MAINHAND
+                    )
+                })
+
+            else -> entity.addStatusEffect(
+                StatusEffectInstance(
+                    StatusEffects.REGENERATION,
+                    Int.MAX_VALUE,
+                    0,
+                    false,
+                    false
+                )
+            )
+        }
+
+        // Give extra stats
         entity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.addPersistentModifier(
-            EntityAttributeModifier("dream_world_dungeon_boss", 4.0, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
+            EntityAttributeModifier("dream_world_dungeon_boss", 9.0, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
         )
         entity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)?.addPersistentModifier(
             EntityAttributeModifier("dream_world_dungeon_boss", 0.5, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
