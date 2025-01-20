@@ -30,7 +30,9 @@
             "type": "minecraft:biome"
           }
         ]
-      },
+      }
+    ],
+    [
       {
         "feature": "lunatic:dream_dungeon",
         "placement": [

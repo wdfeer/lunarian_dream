@@ -6,6 +6,7 @@ import net.minecraft.block.Block
 import net.minecraft.block.Blocks
 import net.minecraft.registry.Registries
 import net.minecraft.util.Identifier
+import net.minecraft.util.math.BlockPos
 import net.minecraft.world.gen.feature.Feature
 import net.minecraft.world.gen.feature.FeatureConfig
 import net.minecraft.world.gen.feature.util.FeatureContext
@@ -26,7 +27,7 @@ class GridFeature() : Feature<GridFeatureConfig>(GridFeatureConfig(Registries.BL
 
         for (y in origin.y until world.topY) {
             if (y % 16 == 0) {
-                val pos = origin.up(y)
+                val pos = origin.withY(y)
                 repeat(16) { world.setBlockState(pos.west(it), block.defaultState, Block.FORCE_STATE) }
                 repeat(15) { world.setBlockState(pos.north(it + 1), block.defaultState, Block.FORCE_STATE) }
             }
@@ -52,26 +53,32 @@ class DungeonFeature() :
         val block = Registries.BLOCK[context.config.outerBlock]
         val size = 16
 
-        // Make hollow cube
-        for (a in 1 until 16) {
-            for (b in 1 until 16) {
-                run { // Top and Bottom
-                    val point = origin.east(a).north(b)
-                    world.setBlockState(point, block.defaultState, Block.FORCE_STATE)
-                    world.setBlockState(point.up(size), block.defaultState, Block.FORCE_STATE)
-                }
-                run { // East and West
-                    val point = origin.up(a).north(b)
-                    world.setBlockState(point, block.defaultState, Block.FORCE_STATE)
-                    world.setBlockState(point.east(size), block.defaultState, Block.FORCE_STATE)
-                }
-                run { // North and South
-                    val point = origin.up(a).east(b)
-                    world.setBlockState(point, block.defaultState, Block.FORCE_STATE)
-                    world.setBlockState(point.north(size), block.defaultState, Block.FORCE_STATE)
+        val hollowCube: List<BlockPos> = buildList {
+            for (a in 1 until size) {
+                for (b in 1 until size) {
+                    run { // Top and Bottom
+                        val point = origin.east(a).north(b)
+                        add(point)
+                        add(point.up(size))
+                    }
+                    run { // East and West
+                        val point = origin.up(a).north(b)
+                        add(point)
+                        add(point.east(size))
+                    }
+                    run { // North and South
+                        val point = origin.up(a).east(b)
+                        add(point)
+                        add(point.north(size))
+                    }
                 }
             }
+
+            // Make door
+            remove(random())
         }
+
+        for (pos in hollowCube) world.setBlockState(pos, block.defaultState, Block.FORCE_STATE)
 
         return true
     }
