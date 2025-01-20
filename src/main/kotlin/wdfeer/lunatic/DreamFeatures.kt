@@ -159,6 +159,7 @@ class DungeonFeature :
 
             else -> return
         }
+        entity.setPersistent()
         entity.setPosition(bossPos)
 
         // Equip items or add status effect to blazes
