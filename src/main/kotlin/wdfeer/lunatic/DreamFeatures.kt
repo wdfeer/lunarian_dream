@@ -4,6 +4,8 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.block.Block
 import net.minecraft.block.Blocks
+import net.minecraft.block.entity.MobSpawnerBlockEntity
+import net.minecraft.entity.EntityType
 import net.minecraft.registry.Registries
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
@@ -11,6 +13,8 @@ import net.minecraft.world.gen.feature.Feature
 import net.minecraft.world.gen.feature.FeatureConfig
 import net.minecraft.world.gen.feature.util.FeatureContext
 import kotlin.math.absoluteValue
+import kotlin.random.Random
+import kotlin.random.nextInt
 
 class GridFeatureConfig(val blockId: Identifier) : FeatureConfig {
     val codec: Codec<GridFeatureConfig> = RecordCodecBuilder.create {
@@ -77,8 +81,25 @@ class DungeonFeature() :
             // Make door
             remove(random())
         }
-
         for (pos in hollowCube) world.setBlockState(pos, block.defaultState, Block.FORCE_STATE)
+
+        // Add enemy spawners
+        val entityTypes = listOf(
+            EntityType.PHANTOM to EntityType.SHULKER,
+            EntityType.BLAZE to EntityType.MAGMA_CUBE,
+        ).random()
+        repeat(6) {
+            val entityType = if (it % 2 == 0) entityTypes.first else entityTypes.second
+            val spawnerPos = origin
+                .up()
+                .east(Random.nextInt(2 until size - 1))
+                .north(Random.nextInt(2 until size - 1))
+            world.setBlockState(spawnerPos, Blocks.SPAWNER.defaultState, Block.FORCE_STATE)
+            val blockEntity = world.getBlockEntity(spawnerPos)
+            if (blockEntity is MobSpawnerBlockEntity) {
+                blockEntity.setEntityType(entityType, net.minecraft.util.math.random.Random.create())
+            }
+        }
 
         return true
     }
