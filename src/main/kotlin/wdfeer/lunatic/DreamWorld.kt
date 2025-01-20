@@ -24,8 +24,8 @@ fun Lunatic.initializeDreamWorld() {
 }
 
 private fun Lunatic.initializeFeatures() {
-    val gridFeature = GridFeature()
-    Registry.register(Registries.FEATURE, Identifier.of(MOD_ID, "dream_grid"), gridFeature)
+    Registry.register(Registries.FEATURE, Identifier.of(MOD_ID, "dream_grid"), GridFeature())
+    Registry.register(Registries.FEATURE, Identifier.of(MOD_ID, "dream_dungeon"), DungeonFeature())
 }
 
 private fun initializeTeleportation() =
