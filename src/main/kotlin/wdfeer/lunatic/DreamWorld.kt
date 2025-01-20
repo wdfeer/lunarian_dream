@@ -42,10 +42,10 @@ private fun initializeTeleportation() =
                 // Teleport on the grid
                 entity.teleport(
                     dreamWorld,
-                    it.x.toDouble() + 1,
+                    0.0, // Flag not set - uses player pos
                     40.0,
-                    it.z.toDouble() + 1,
-                    setOf(PositionFlag.X, PositionFlag.Y, PositionFlag.Z),
+                    0.0, // Flag not set - uses player pos
+                    setOf(PositionFlag.Y),
                     0f,
                     0f
                 )

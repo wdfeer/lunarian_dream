@@ -9,6 +9,7 @@ import net.minecraft.util.Identifier
 import net.minecraft.world.gen.feature.Feature
 import net.minecraft.world.gen.feature.FeatureConfig
 import net.minecraft.world.gen.feature.util.FeatureContext
+import kotlin.math.absoluteValue
 
 class GridFeatureConfig(val blockId: Identifier) : FeatureConfig {
     val codec: Codec<GridFeatureConfig> = RecordCodecBuilder.create {
@@ -44,26 +45,28 @@ class DungeonFeatureConfig(val outerBlock: Identifier) : FeatureConfig {
 class DungeonFeature() :
     Feature<DungeonFeatureConfig>(DungeonFeatureConfig(Registries.BLOCK.getId(Blocks.BEDROCK)).codec) {
     override fun generate(context: FeatureContext<DungeonFeatureConfig>): Boolean {
+        if (context.origin.let { it.x.absoluteValue + it.z.absoluteValue } < 64) return false
+
         val world = context.world
         val origin = context.origin.withY((16 until world.topY step 16).toList().random())
         val block = Registries.BLOCK[context.config.outerBlock]
         val size = 16
 
         // Make hollow cube
-        for (a in 0 until 16) {
-            for (b in 0 until 16) {
+        for (a in 1 until 16) {
+            for (b in 1 until 16) {
                 run { // Top and Bottom
-                    val point = origin.west(a).north(b)
+                    val point = origin.east(a).north(b)
                     world.setBlockState(point, block.defaultState, Block.FORCE_STATE)
                     world.setBlockState(point.up(size), block.defaultState, Block.FORCE_STATE)
                 }
-                run { // West and East
+                run { // East and West
                     val point = origin.up(a).north(b)
                     world.setBlockState(point, block.defaultState, Block.FORCE_STATE)
-                    world.setBlockState(point.west(size), block.defaultState, Block.FORCE_STATE)
+                    world.setBlockState(point.east(size), block.defaultState, Block.FORCE_STATE)
                 }
                 run { // North and South
-                    val point = origin.up(a).west(b)
+                    val point = origin.up(a).east(b)
                     world.setBlockState(point, block.defaultState, Block.FORCE_STATE)
                     world.setBlockState(point.north(size), block.defaultState, Block.FORCE_STATE)
                 }

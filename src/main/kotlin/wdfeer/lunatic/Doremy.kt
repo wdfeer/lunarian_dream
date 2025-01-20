@@ -24,7 +24,7 @@ fun Lunatic.initializeDoremyEntity() {
 
 class Doremy(world: World) : Entity(DoremyEntityType, world) {
     init {
-        setPosition(0.5, 217.0, 0.5)
+        setPosition(0.5, 213.0, 0.5)
         customName = Text.literal("Doremy Sweet")
     }
 
