@@ -14,13 +14,21 @@
         {
           "next": "go_home",
           "text": "Can you teleport me home?"
+        },
+        {
+          "next": "you_have_chosen_death",
+          "text": "[Attack her]"
         }
       ]
     },
     "explain_dream_world": {
-      "text": "This is the Dream World, where dreams turn real—and nightmares do too. Tread carefully, or you'll never wake.",
+      "text": "This is the Dream World, a realm where dreams take form. Few mortals tread here without purpose.",
       "type": "default",
       "choices": [
+        {
+          "next": "explain_player",
+          "text": "Why am I here?"
+        },
         {
           "next": "start",
           "text": "I see."
@@ -30,6 +38,10 @@
     "explain_doremy": {
       "text": "I’m Doremy Sweet, the guardian of the Dream World. Here, I ensure dreams flow—and don’t consume you.",
       "choices": [
+        {
+          "next": "explain_doremy_job",
+          "text": "What do you do here?"
+        },
         {
           "next": "start",
           "text": "I see."
@@ -43,6 +55,32 @@
         "type": "blabber:command",
         "value": "/execute in minecraft:overworld run tp @s ~ 90 ~"
       }
+    },
+    "you_have_chosen_death": {
+      "text": "",
+      "action": {
+        "type": "blabber:command",
+        "value": "/kill @s"
+      },
+      "type": "end_dialogue"
+    },
+    "explain_player": {
+      "text": "That's for you to figure out, isn’t it? The Dream World reflects your mind... or something close to it.",
+      "choices": [
+        {
+          "next": "start",
+          "text": "I see."
+        }
+      ]
+    },
+    "explain_doremy_job": {
+      "text": "I maintain the balance between dreams and reality. Without me, this place would unravel—and maybe you along with it.",
+      "choices": [
+        {
+          "next": "start",
+          "text": "I see."
+        }
+      ]
     }
   },
   "layout": {
