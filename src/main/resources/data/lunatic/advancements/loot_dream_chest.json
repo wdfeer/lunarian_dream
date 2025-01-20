@@ -4,7 +4,7 @@
       "item": "minecraft:bedrock"
     },
     "title": "Dream Plunder",
-    "description": "Brave the depths of the nightmare and claim its hidden rewards.",
+    "description": "Loot a nightmare dungeon.",
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": true

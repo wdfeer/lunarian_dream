@@ -1,10 +1,10 @@
 {
   "display": {
     "icon": {
-      "item": "minecraft:cake"
+      "item": "minecraft:ender_eye"
     },
     "title": "Dream Courier",
-    "description": "Speak with Doremy Sweet, the guardian of dreams and nightmares.",
+    "description": "Speak with Doremy Sweet.",
     "show_toast": true,
     "announce_to_chat": true
   },
