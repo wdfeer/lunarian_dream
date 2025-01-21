@@ -1,7 +1,6 @@
 package wdfeer.lunatic
 
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.damage.DamageSource
 import net.minecraft.entity.effect.StatusEffectInstance
@@ -22,7 +21,6 @@ const val DREAM_WORLD_PATH = "dream_world"
 fun Lunatic.initializeDreamWorld() {
     initializeFeatures()
     initializeTeleportation()
-    initializeDoremy()
 }
 
 private fun Lunatic.initializeFeatures() {
@@ -60,19 +58,6 @@ private fun initializeTeleportation() =
             entity.addStatusEffect(StatusEffectInstance(StatusEffects.WITHER))
             false
         } else true
-    }
-
-private fun initializeDoremy() =
-    ServerTickEvents.START_SERVER_TICK.register { server ->
-        if (server.ticks % 20 != 0) return@register
-
-        val world = server.getDreamWorld()
-        val noDoremy = world.iterateEntities().none { it.displayName.string == "Doremy Sweet" }
-
-        // Spawn doremy if she is not there
-        if (world.isChunkLoaded(0, 0) && noDoremy) {
-            world.spawnEntity(Doremy(world))
-        }
     }
 
 fun MinecraftServer.getDreamWorld(): ServerWorld = getWorld(
