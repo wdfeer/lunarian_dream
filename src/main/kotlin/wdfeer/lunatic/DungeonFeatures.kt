@@ -28,6 +28,7 @@ import net.minecraft.world.gen.feature.FeatureConfig
 import net.minecraft.world.gen.feature.util.FeatureContext
 import wdfeer.lunatic.DungeonFeature.Companion.SIZE
 import kotlin.math.absoluteValue
+import kotlin.math.max
 import kotlin.random.Random
 import kotlin.random.nextInt
 
@@ -53,7 +54,7 @@ class DungeonFeature :
         generator.createHollowCube()
         generator.createSpawners()
         generator.createChests()
-        repeat(2) { generator.createBoss() }
+        generator.createBoss()
 
         return true
     }
@@ -121,76 +122,123 @@ private fun DungeonGenerator.createChests() {
 }
 
 private fun DungeonGenerator.createBoss() {
-    val bossPos =
-        origin.up(2).east(Random.nextInt(2 until SIZE - 1)).north(Random.nextInt(2 until SIZE - 1)).toCenterPos()
-    val entityType = listOf(
-        EntityType.SKELETON,
-        EntityType.WITHER_SKELETON,
-        EntityType.ZOMBIE,
-        EntityType.ZOMBIE_VILLAGER,
-        EntityType.BLAZE
-    ).random()
-
-    val entity: HostileEntity = when (worldAccess) {
-        is ServerWorld -> entityType.create(worldAccess) ?: return
-        is ChunkRegion -> entityType.create(worldAccess.server?.getDreamWorld() ?: return) ?: return
-
-        else -> return
-    }
-    entity.setPersistent()
-    entity.setPosition(bossPos)
-
-    // Equip items or add status effect to blazes
-    when {
-        entityType == EntityType.SKELETON -> entity.setStackInHand(Hand.MAIN_HAND, ItemStack(Items.BOW).apply {
-            addEnchantment(Enchantments.PUNCH, 1)
-            addEnchantment(Enchantments.FLAME, 0)
-            addAttributeModifier(
-                EntityAttributes.GENERIC_MOVEMENT_SPEED,
-                EntityAttributeModifier(
-                    "dream_world_skeleton_bow_speed",
-                    0.05,
-                    EntityAttributeModifier.Operation.MULTIPLY_BASE
-                ),
-                EquipmentSlot.MAINHAND
+    fun makeEntity(type: EntityType<out HostileEntity>): HostileEntity? {
+        return when (worldAccess) {
+            is ServerWorld -> type.create(worldAccess)
+            is ChunkRegion -> worldAccess.server?.getDreamWorld()?.let { type.create(it) }
+            else -> null
+        }?.apply {
+            setPersistent()
+            setPosition(
+                origin.up(2)
+                    .east(Random.nextInt(2 until SIZE - 1))
+                    .north(Random.nextInt(2 until SIZE - 1))
+                    .toCenterPos()
             )
-        })
+        }
+    }
 
-        entityType != EntityType.BLAZE -> entity.setStackInHand(
-            Hand.MAIN_HAND,
-            ItemStack(Items.DIAMOND_AXE).apply {
-                addEnchantment(Enchantments.KNOCKBACK, 1)
-                addEnchantment(Enchantments.SHARPNESS, 4)
-                addAttributeModifier(
-                    EntityAttributes.GENERIC_MOVEMENT_SPEED,
-                    EntityAttributeModifier(
-                        "dream_world_axe_speed",
-                        0.05,
-                        EntityAttributeModifier.Operation.MULTIPLY_BASE
-                    ),
-                    EquipmentSlot.MAINHAND
-                )
-            })
+    val type = bossTypes.random()
+    val entities = (0 until type.count).mapNotNull { makeEntity(type.entityType)?.apply(type.onCreation) }
+    for (e in entities) worldAccess.spawnEntity(e)
+}
 
-        else -> entity.addStatusEffect(
-            StatusEffectInstance(
-                StatusEffects.REGENERATION,
-                Int.MAX_VALUE,
-                0,
-                false,
-                false
+private data class BossType(
+    val entityType: EntityType<out HostileEntity>,
+    val count: Int,
+    val onCreation: HostileEntity.() -> Unit
+)
+
+private val bossTypes = run {
+    fun HostileEntity.multiplyMaxHp(mult: Double) {
+        getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.addPersistentModifier(
+            EntityAttributeModifier(
+                "Dream World Dungeon Boss Health",
+                max(mult - 1, 1.0),
+                EntityAttributeModifier.Operation.MULTIPLY_TOTAL
+            )
+        )
+        health = maxHealth
+    }
+
+    fun HostileEntity.multiplySpeed(mult: Double) {
+        getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)?.addPersistentModifier(
+            EntityAttributeModifier(
+                "Dream World Dungeon Boss Speed",
+                max(mult - 1, 1.0),
+                EntityAttributeModifier.Operation.MULTIPLY_TOTAL
             )
         )
     }
 
-    // Give extra stats
-    entity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.addPersistentModifier(
-        EntityAttributeModifier("dream_world_dungeon_boss", 9.0, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
+    listOf(
+        BossType(EntityType.SKELETON, 4) {
+            multiplyMaxHp(8.0)
+            setStackInHand(Hand.MAIN_HAND, ItemStack(Items.BOW).apply {
+                addEnchantment(Enchantments.PUNCH, 1)
+                addEnchantment(Enchantments.FLAME, 0)
+            })
+        },
+        BossType(EntityType.SKELETON, 1) {
+            multiplyMaxHp(12.0)
+            multiplySpeed(1.6)
+            equipStack(EquipmentSlot.CHEST, ItemStack(Items.CHAINMAIL_CHESTPLATE))
+            equipStack(EquipmentSlot.LEGS, ItemStack(Items.CHAINMAIL_LEGGINGS))
+            setStackInHand(Hand.MAIN_HAND, ItemStack(Items.DIAMOND_SWORD).apply {
+                addEnchantment(Enchantments.SHARPNESS, 4)
+            })
+        },
+        BossType(EntityType.WITHER_SKELETON, 2) {
+            multiplyMaxHp(5.0)
+            multiplySpeed(1.4)
+            setStackInHand(
+                Hand.MAIN_HAND, ItemStack(Items.NETHERITE_AXE).apply {
+                    addEnchantment(Enchantments.KNOCKBACK, 1)
+                    addEnchantment(Enchantments.SHARPNESS, 4)
+                })
+        },
+        BossType(EntityType.ZOMBIE, 3) {
+            multiplyMaxHp(5.0)
+            multiplySpeed(1.4)
+            setStackInHand(
+                Hand.MAIN_HAND, ItemStack(Items.STONE_SWORD).apply {
+                    addEnchantment(Enchantments.SHARPNESS, 6)
+                })
+        },
+        BossType(EntityType.ZOMBIE_VILLAGER, 1) {
+            multiplyMaxHp(20.0)
+            multiplySpeed(1.25)
+            equipStack(EquipmentSlot.HEAD, ItemStack(Items.IRON_HELMET))
+            equipStack(EquipmentSlot.CHEST, ItemStack(Items.IRON_CHESTPLATE))
+            equipStack(EquipmentSlot.LEGS, ItemStack(Items.IRON_LEGGINGS))
+            equipStack(EquipmentSlot.FEET, ItemStack(Items.IRON_BOOTS))
+            setStackInHand(
+                Hand.MAIN_HAND, ItemStack(Items.IRON_AXE).apply {
+                    addEnchantment(Enchantments.KNOCKBACK, 3)
+                    addEnchantment(Enchantments.SHARPNESS, 6)
+                })
+        },
+        BossType(EntityType.BLAZE, 4) {
+            multiplyMaxHp(3.0)
+            addStatusEffect(StatusEffectInstance(StatusEffects.REGENERATION, Int.MAX_VALUE, 3))
+        },
+        BossType(EntityType.CAVE_SPIDER, 3) {
+            multiplyMaxHp(2.0)
+            multiplySpeed(1.4)
+            addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, Int.MAX_VALUE))
+            addStatusEffect(StatusEffectInstance(StatusEffects.REGENERATION, Int.MAX_VALUE, 1))
+        },
+        BossType(EntityType.SPIDER, 1) {
+            multiplyMaxHp(12.0)
+            multiplySpeed(1.25)
+            getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE)?.addPersistentModifier(
+                EntityAttributeModifier(
+                    "Dream World Dungeon Boss Damage",
+                    4.0,
+                    EntityAttributeModifier.Operation.MULTIPLY_TOTAL
+                )
+            )
+            addStatusEffect(StatusEffectInstance(StatusEffects.REGENERATION, Int.MAX_VALUE, 0, true, true))
+        }
     )
-    entity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)?.addPersistentModifier(
-        EntityAttributeModifier("dream_world_dungeon_boss", 0.5, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
-    )
-    entity.health = entity.maxHealth
-
-    worldAccess.spawnEntity(entity)
 }
