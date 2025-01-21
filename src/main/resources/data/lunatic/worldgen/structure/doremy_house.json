@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:jigsaw",
+  "biomes": "lunatic:dream_biome",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "beard_box",
+  "start_pool": "lunatic:doremy_house",
+  "size": 1,
+  "start_height": {
+    "absolute": 200
+  },
+  "max_distance_from_center": 40,
+  "use_expansion_hack": false
+}
