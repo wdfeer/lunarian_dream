@@ -15,9 +15,15 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.ChunkSectionPos
+import net.minecraft.world.World
 import wdfeer.lunatic.Lunatic.MOD_ID
 
 const val DREAM_WORLD_PATH = "dream_world"
+val dreamWorldKey: RegistryKey<World> = RegistryKey.of(
+    RegistryKeys.WORLD,
+    Identifier.of(MOD_ID, DREAM_WORLD_PATH)
+)
+
 fun Lunatic.initializeDreamWorld() {
     initializeFeatures()
     initializeTeleportation()
