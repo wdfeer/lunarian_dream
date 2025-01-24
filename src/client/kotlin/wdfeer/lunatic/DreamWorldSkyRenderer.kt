@@ -3,10 +3,11 @@ package wdfeer.lunatic
 import com.mojang.blaze3d.systems.RenderSystem
 import net.fabricmc.fabric.api.client.rendering.v1.DimensionRenderingRegistry.SkyRenderer
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
+import net.minecraft.client.MinecraftClient
 import net.minecraft.client.render.*
 import org.joml.Matrix4f
 import org.joml.Vector3f
-import kotlin.math.PI
+import kotlin.math.*
 
 const val PIf = PI.toFloat()
 
@@ -24,14 +25,26 @@ object DreamWorldSkyRenderer : SkyRenderer {
         val buffer = tessellator.buffer
         val matrices = matrixStack.peek().positionMatrix
 
-        buffer.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR)
-        // from -x to +x, going through +y
-        buffer.line(matrices, Vector3f(-1000f, 20f, 0f), Vector3f(1000f, 20f, 0f))
-
+        drawLineEffect(matrices, buffer)
         tessellator.draw()
 
         RenderSystem.depthMask(true)
         RenderSystem.disableBlend()
+    }
+
+    private fun drawLineEffect(matrices: Matrix4f, buffer: BufferBuilder) {
+        buffer.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR)
+
+        val count = 17
+        val x = 3000f
+        val y = 10f
+        val playerY = MinecraftClient.getInstance().player?.y?.toFloat() ?: 60f
+        for (z in (1..count).map { i ->
+            (i - count / 2f) * (sqrt(playerY) + 1f)
+        }) {
+            buffer.line(matrices, Vector3f(-x, y, z), Vector3f(x, y, z))
+            buffer.line(matrices, Vector3f(-x, -y, z), Vector3f(x, -y, z))
+        }
     }
 
     private fun BufferBuilder.line(matrices: Matrix4f, p1: Vector3f, p2: Vector3f) {
@@ -39,3 +52,4 @@ object DreamWorldSkyRenderer : SkyRenderer {
         vertex(matrices, p2.x, p2.y, p2.z).color(1f, 0f, 0f, 0.5f).next()
     }
 }
+
