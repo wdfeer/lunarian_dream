@@ -40,23 +40,8 @@ private fun initializeTeleportation() =
         if (amount < entity.health) return@register true
 
         return@register if (entity.isSleeping) {
-            val server = entity.server
-            val dreamWorld = server.getDreamWorld()
-
             entity.clearSleepingPosition()
-            ChunkSectionPos.from(dreamWorld.getChunk(0, 0)).minPos.let {
-                // Teleport on the grid
-                entity.teleport(
-                    dreamWorld,
-                    0.0, // Flag not set - uses player pos
-                    40.0,
-                    0.0, // Flag not set - uses player pos
-                    setOf(PositionFlag.Y),
-                    0f,
-                    0f
-                )
-            }
-
+            entity.teleportToDreamWorld()
 
             false
         } else if (entity.world.registryKey.value.path == DREAM_WORLD_PATH) {
@@ -72,3 +57,15 @@ fun MinecraftServer.getDreamWorld(): ServerWorld = getWorld(
         Identifier.of(MOD_ID, DREAM_WORLD_PATH)
     )
 )!! // Must be registered
+
+fun ServerPlayerEntity.teleportToDreamWorld() {
+    teleport(
+        server.getDreamWorld(),
+        0.0, // Flag not set - uses player pos
+        40.0,
+        0.0, // Flag not set - uses player pos
+        setOf(PositionFlag.Y),
+        0f,
+        0f
+    )
+}
