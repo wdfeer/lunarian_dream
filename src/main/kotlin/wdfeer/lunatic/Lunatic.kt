@@ -8,6 +8,7 @@ object Lunatic : ModInitializer {
     val logger = LoggerFactory.getLogger("lunatic")
 
     override fun onInitialize() {
+        initializeBlocks()
         initializeDoremyEntity()
         initializeDreamWorld()
         logger.info("Lunatic loaded!")
