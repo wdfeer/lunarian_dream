@@ -1,7 +1,5 @@
 package wdfeer.lunatic
 
-import com.google.common.collect.ImmutableMap
-import com.mojang.serialization.MapCodec
 import net.fabricmc.fabric.api.`object`.builder.v1.block.FabricBlockSettings
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
@@ -17,7 +15,7 @@ fun initializeBlocks() {
     DreamPortal
 }
 
-private object DreamPortal : Block(
+object DreamPortal : Block(
     FabricBlockSettings.create()
         .nonOpaque()
         .notSolid()
@@ -26,13 +24,10 @@ private object DreamPortal : Block(
         .luminance { 15 }) {
     init {
         Registry.register(Registries.BLOCK, Identifier(Lunatic.MOD_ID, "dream_portal"), this)
-        defaultState = DreamPortalBlockState
     }
 
-    private object DreamPortalBlockState :
-        BlockState(DreamPortal, ImmutableMap.of(), MapCodec.unit { DreamPortalBlockState }) {
-        override fun onEntityCollision(world: World?, pos: BlockPos?, entity: Entity?) {
-            if (entity is ServerPlayerEntity) entity.teleportToDreamWorld()
-        }
+    @Suppress("OVERRIDE_DEPRECATION")
+    override fun onEntityCollision(state: BlockState?, world: World?, pos: BlockPos?, entity: Entity?) {
+        if (entity is ServerPlayerEntity) entity.teleportToDreamWorld()
     }
 }
