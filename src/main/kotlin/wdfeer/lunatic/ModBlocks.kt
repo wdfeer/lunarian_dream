@@ -26,8 +26,13 @@ object DreamPortal : Block(
         Registry.register(Registries.BLOCK, Identifier(Lunatic.MOD_ID, "dream_portal"), this)
     }
 
+    override fun onSteppedOn(world: World?, pos: BlockPos?, state: BlockState?, entity: Entity?) {
+        if (entity is ServerPlayerEntity) entity.teleportToDreamWorld()
+    }
+
     @Suppress("OVERRIDE_DEPRECATION")
     override fun onEntityCollision(state: BlockState?, world: World?, pos: BlockPos?, entity: Entity?) {
         if (entity is ServerPlayerEntity) entity.teleportToDreamWorld()
+
     }
 }
