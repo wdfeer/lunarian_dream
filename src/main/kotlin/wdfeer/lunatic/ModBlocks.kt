@@ -12,7 +12,7 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 
 fun initializeBlocks() {
-    DreamPortal
+    Registry.register(Registries.BLOCK, Identifier(Lunatic.MOD_ID, "dream_portal"), DreamPortal)
 }
 
 object DreamPortal : Block(
@@ -23,7 +23,6 @@ object DreamPortal : Block(
         .resistance(Float.POSITIVE_INFINITY)
         .luminance { 15 }) {
     init {
-        Registry.register(Registries.BLOCK, Identifier(Lunatic.MOD_ID, "dream_portal"), this)
     }
 
     override fun onSteppedOn(world: World?, pos: BlockPos?, state: BlockState?, entity: Entity?) {
