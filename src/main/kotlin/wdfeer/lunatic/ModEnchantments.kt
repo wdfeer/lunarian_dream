@@ -22,7 +22,7 @@ private object DreamRepair : Enchantment(Rarity.VERY_RARE, EnchantmentTarget.BRE
                 }.filter { stack ->
                     EnchantmentHelper.fromNbt(stack.enchantments).containsKey(DreamRepair)
                 }.forEach { stack ->
-                    stack.damage = (stack.damage * 0.8f).toInt()
+                    stack.damage /= 2
                 }
             }
             true
