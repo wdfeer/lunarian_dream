@@ -53,7 +53,6 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:diamond_pickaxe",
-          "weight": 1,
           "functions": [
             {
               "function": "minecraft:enchant_with_levels",
@@ -123,7 +122,6 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:golden_axe",
-          "weight": 1,
           "functions": [
             {
               "function": "minecraft:set_enchantments",
@@ -133,6 +131,18 @@
                   "min": 1,
                   "max": 7
                 }
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:enchanted_book",
+          "functions": [
+            {
+              "function": "minecraft:set_enchantments",
+              "enchantments": {
+                "lunatic:dream_repair": 1
               }
             }
           ]
