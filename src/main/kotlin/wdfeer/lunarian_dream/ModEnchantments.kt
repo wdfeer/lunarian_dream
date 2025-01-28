@@ -5,13 +5,16 @@ import net.minecraft.enchantment.Enchantment
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.enchantment.EnchantmentTarget
 import net.minecraft.enchantment.MendingEnchantment
+import net.minecraft.enchantment.Enchantments
 import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
+import net.minecraft.entity.EntityGroup
 
 fun initializeEnchantments() {
     Registry.register(Registries.ENCHANTMENT, Identifier.of(LunarianDream.MOD_ID, "dream_repair"), DreamRepair)
+    Registry.register(Registries.ENCHANTMENT, Identifier.of(LunarianDream.MOD_ID, "mental_break"), MentalBreak)
 }
 
 private object DreamRepair : Enchantment(Rarity.VERY_RARE, EnchantmentTarget.BREAKABLE, arrayOf()) {
@@ -34,5 +37,23 @@ private object DreamRepair : Enchantment(Rarity.VERY_RARE, EnchantmentTarget.BRE
 
     override fun canAccept(other: Enchantment?): Boolean {
 	return super.canAccept(other) && other !is MendingEnchantment
+    }
+}
+
+private object MentalBreak : Enchantment(Rarity.VERY_RARE, EnchantmentTarget.WEAPON, arrayOf()) {
+    override fun isTreasure(): Boolean = true
+
+    override fun canAccept(other: Enchantment?): Boolean {
+	return super.canAccept(other) &&
+		other != Enchantments.SHARPNESS &&
+		other != Enchantments.SMITE &&
+		other != Enchantments.BANE_OF_ARTHROPODS
+    }
+
+    override fun getAttackDamage(level: Int, group: EntityGroup): Float {
+ 	return when (group) {
+		EntityGroup.UNDEAD -> 0f
+		else -> 4f
+	}
     }
 }
