@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents
 import net.minecraft.enchantment.Enchantment
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.enchantment.EnchantmentTarget
+import net.minecraft.enchantment.MendingEnchantment
 import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
 import net.minecraft.server.network.ServerPlayerEntity
@@ -30,4 +31,8 @@ private object DreamRepair : Enchantment(Rarity.VERY_RARE, EnchantmentTarget.BRE
     }
 
     override fun isTreasure(): Boolean = true
+
+    override fun canAccept(other: Enchantment?): Boolean {
+	return super.canAccept(other) && other !is MendingEnchantment
+    }
 }
