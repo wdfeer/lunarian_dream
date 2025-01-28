@@ -146,6 +146,18 @@
               }
             }
           ]
+        },
+	{
+          "type": "minecraft:item",
+          "name": "minecraft:enchanted_book",
+          "functions": [
+            {
+              "function": "minecraft:set_enchantments",
+              "enchantments": {
+                "lunarian_dream:mental_break": 1
+              }
+            }
+          ]
         }
       ]
     }
