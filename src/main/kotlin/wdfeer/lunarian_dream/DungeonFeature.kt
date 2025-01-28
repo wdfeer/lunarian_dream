@@ -6,29 +6,19 @@ import net.minecraft.block.Block
 import net.minecraft.block.Blocks
 import net.minecraft.block.entity.ChestBlockEntity
 import net.minecraft.block.entity.MobSpawnerBlockEntity
-import net.minecraft.enchantment.Enchantments
 import net.minecraft.entity.EntityType
-import net.minecraft.entity.EquipmentSlot
-import net.minecraft.entity.attribute.EntityAttributeModifier
-import net.minecraft.entity.attribute.EntityAttributes
-import net.minecraft.entity.effect.StatusEffectInstance
-import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.entity.mob.HostileEntity
-import net.minecraft.item.ItemStack
-import net.minecraft.item.Items
 import net.minecraft.registry.Registries
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.util.Hand
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Vec3i
 import net.minecraft.world.ChunkRegion
 import net.minecraft.world.StructureWorldAccess
 import net.minecraft.world.gen.feature.Feature
 import net.minecraft.world.gen.feature.FeatureConfig
 import net.minecraft.world.gen.feature.util.FeatureContext
-import wdfeer.lunarian_dream.DungeonFeature.Companion.SIZE
 import kotlin.math.absoluteValue
-import kotlin.math.max
 import kotlin.random.Random
 import kotlin.random.nextInt
 
@@ -39,12 +29,10 @@ class DungeonFeatureConfig(val outerBlock: Identifier) : FeatureConfig {
     }
 }
 
+private const val SIZE = 16
+
 class DungeonFeature :
     Feature<DungeonFeatureConfig>(DungeonFeatureConfig(Registries.BLOCK.getId(Blocks.BEDROCK)).codec) {
-    companion object {
-        const val SIZE = 16
-    }
-
     override fun generate(context: FeatureContext<DungeonFeatureConfig>): Boolean {
         if (context.origin.let { it.x.absoluteValue + it.z.absoluteValue } < 64) return false
         if (Random.nextFloat() > 0.1f) return false
@@ -57,6 +45,46 @@ class DungeonFeature :
         generator.createBoss()
 
         return true
+    }
+
+    companion object {
+        fun tryDestroyDungeon(world: ServerWorld, pos: BlockPos) {
+            // check if in dungeon, doesn't support feature config
+            if (world.getBlockState(pos.withY(pos.y / 16 * 16)).block != Blocks.BEDROCK) return
+
+            val origin = pos.run { BlockPos(x / 16 * 16, y / 16 * 16, z / 16 * 16) }
+            // check if dungeon contains enemies
+            if (world.iterateEntities().any { entity ->
+                    entity is HostileEntity &&
+                            entity.blockPos.subtract(origin.run { Vec3i(x, y, z) })
+                                .run {
+                                    // position within 16x16x16 cube
+                                    listOf(x, y, z).all { it < 16 }
+                                }
+                }) return
+
+            buildList {
+                for (a in 1 until SIZE) {
+                    for (b in 1 until SIZE) {
+                        run { // Top and Bottom
+                            val point = origin.east(a).north(b)
+                            add(point)
+                            add(point.up(SIZE))
+                        }
+                        run { // East and West
+                            val point = origin.up(a).north(b)
+                            add(point)
+                            add(point.east(SIZE))
+                        }
+                        run { // North and South
+                            val point = origin.up(a).east(b)
+                            add(point)
+                            add(point.north(SIZE))
+                        }
+                    }
+                }
+            }.forEach { world.setBlockState(it, Blocks.AIR.defaultState, Block.FORCE_STATE) }
+        }
     }
 }
 
@@ -130,9 +158,7 @@ private fun DungeonGenerator.createBoss() {
         }?.apply {
             setPersistent()
             setPosition(
-                origin.up(2)
-                    .east(Random.nextInt(2 until SIZE - 1))
-                    .north(Random.nextInt(2 until SIZE - 1))
+                origin.up(2).east(Random.nextInt(2 until SIZE - 1)).north(Random.nextInt(2 until SIZE - 1))
                     .toCenterPos()
             )
         }
@@ -141,104 +167,4 @@ private fun DungeonGenerator.createBoss() {
     val type = bossTypes.random()
     val entities = (0 until type.count).mapNotNull { makeEntity(type.entityType)?.apply(type.onCreation) }
     for (e in entities) worldAccess.spawnEntity(e)
-}
-
-private data class BossType(
-    val entityType: EntityType<out HostileEntity>,
-    val count: Int,
-    val onCreation: HostileEntity.() -> Unit
-)
-
-private val bossTypes = run {
-    fun HostileEntity.multiplyMaxHp(mult: Double) {
-        getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.addPersistentModifier(
-            EntityAttributeModifier(
-                "Dream World Dungeon Boss Health",
-                max(mult - 1, 1.0),
-                EntityAttributeModifier.Operation.MULTIPLY_TOTAL
-            )
-        )
-        health = maxHealth
-    }
-
-    fun HostileEntity.multiplySpeed(mult: Double) {
-        getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)?.addPersistentModifier(
-            EntityAttributeModifier(
-                "Dream World Dungeon Boss Speed",
-                max(mult - 1, 1.0),
-                EntityAttributeModifier.Operation.MULTIPLY_TOTAL
-            )
-        )
-    }
-
-    listOf(
-        BossType(EntityType.SKELETON, 4) {
-            multiplyMaxHp(8.0)
-            setStackInHand(Hand.MAIN_HAND, ItemStack(Items.BOW).apply {
-                addEnchantment(Enchantments.PUNCH, 1)
-                addEnchantment(Enchantments.FLAME, 0)
-            })
-        },
-        BossType(EntityType.SKELETON, 1) {
-            multiplyMaxHp(12.0)
-            multiplySpeed(1.6)
-            equipStack(EquipmentSlot.CHEST, ItemStack(Items.CHAINMAIL_CHESTPLATE))
-            equipStack(EquipmentSlot.LEGS, ItemStack(Items.CHAINMAIL_LEGGINGS))
-            setStackInHand(Hand.MAIN_HAND, ItemStack(Items.DIAMOND_SWORD).apply {
-                addEnchantment(Enchantments.SHARPNESS, 4)
-            })
-        },
-        BossType(EntityType.WITHER_SKELETON, 2) {
-            multiplyMaxHp(5.0)
-            multiplySpeed(1.4)
-            setStackInHand(
-                Hand.MAIN_HAND, ItemStack(Items.NETHERITE_AXE).apply {
-                    addEnchantment(Enchantments.KNOCKBACK, 1)
-                    addEnchantment(Enchantments.SHARPNESS, 4)
-                })
-        },
-        BossType(EntityType.ZOMBIE, 3) {
-            multiplyMaxHp(5.0)
-            multiplySpeed(1.4)
-            setStackInHand(
-                Hand.MAIN_HAND, ItemStack(Items.STONE_SWORD).apply {
-                    addEnchantment(Enchantments.SHARPNESS, 6)
-                })
-        },
-        BossType(EntityType.ZOMBIE_VILLAGER, 1) {
-            multiplyMaxHp(20.0)
-            multiplySpeed(1.25)
-            equipStack(EquipmentSlot.HEAD, ItemStack(Items.IRON_HELMET))
-            equipStack(EquipmentSlot.CHEST, ItemStack(Items.IRON_CHESTPLATE))
-            equipStack(EquipmentSlot.LEGS, ItemStack(Items.IRON_LEGGINGS))
-            equipStack(EquipmentSlot.FEET, ItemStack(Items.IRON_BOOTS))
-            setStackInHand(
-                Hand.MAIN_HAND, ItemStack(Items.IRON_AXE).apply {
-                    addEnchantment(Enchantments.KNOCKBACK, 3)
-                    addEnchantment(Enchantments.SHARPNESS, 6)
-                })
-        },
-        BossType(EntityType.BLAZE, 4) {
-            multiplyMaxHp(3.0)
-            addStatusEffect(StatusEffectInstance(StatusEffects.REGENERATION, Int.MAX_VALUE, 3))
-        },
-        BossType(EntityType.CAVE_SPIDER, 3) {
-            multiplyMaxHp(2.0)
-            multiplySpeed(1.4)
-            addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, Int.MAX_VALUE))
-            addStatusEffect(StatusEffectInstance(StatusEffects.REGENERATION, Int.MAX_VALUE, 1))
-        },
-        BossType(EntityType.SPIDER, 1) {
-            multiplyMaxHp(12.0)
-            multiplySpeed(1.25)
-            getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE)?.addPersistentModifier(
-                EntityAttributeModifier(
-                    "Dream World Dungeon Boss Damage",
-                    4.0,
-                    EntityAttributeModifier.Operation.MULTIPLY_TOTAL
-                )
-            )
-            addStatusEffect(StatusEffectInstance(StatusEffects.REGENERATION, Int.MAX_VALUE, 0, true, true))
-        }
-    )
 }
