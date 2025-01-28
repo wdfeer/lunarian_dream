@@ -1,4 +1,6 @@
 {
   "enchantment.lunarian_dream.dream_repair": "Dream Repair",
   "enchantment.lunarian_dream.dream_repair.desc": "Item repairs after sleep."
+  "enchantment.lunarian_dream.mental_break": "Mental Break",
+  "enchantment.lunarian_dream.mental_break.desc": "Increased damage to non-undead."
 }
