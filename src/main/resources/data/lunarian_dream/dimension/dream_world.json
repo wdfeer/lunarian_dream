@@ -1,0 +1,17 @@
+{
+  "type": "lunarian_dream:dream_world",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "biome": "lunarian_dream:dream_biome",
+      "lakes": false,
+      "features": true,
+      "layers": [
+        {
+          "height": 4,
+          "block": "minecraft:barrier"
+        }
+      ]
+    }
+  }
+}

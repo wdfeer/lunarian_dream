@@ -1,0 +1,19 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:magenta_bed"
+    },
+    "title": "LunarianDream",
+    "description": "Die in a bed to enter the Dream World.",
+    "background": "minecraft:textures/gui/advancements/backgrounds/end.png"
+  },
+  "criteria": {
+    "enter_dream_world": {
+      "trigger": "minecraft:changed_dimension",
+      "conditions": {
+        "to": "lunarian_dream:dream_world"
+      }
+    }
+  },
+  "requirements": []
+}

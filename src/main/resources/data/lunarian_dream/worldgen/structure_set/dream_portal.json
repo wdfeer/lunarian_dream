@@ -1,0 +1,16 @@
+{
+  "structures": [
+    {
+      "structure": "lunarian_dream:dream_portal",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:concentric_rings",
+    "distance": 8,
+    "spread": 2,
+    "count": 4,
+    "preferred_biomes": "minecraft:deep_ocean",
+    "salt": 0
+  }
+}

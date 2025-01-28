@@ -1,0 +1,16 @@
+{
+  "structures": [
+    {
+      "structure": "lunarian_dream:doremy_house",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:concentric_rings",
+    "distance": 1,
+    "spread": 1,
+    "count": 1,
+    "preferred_biomes": "lunarian_dream:dream_biome",
+    "salt": 0
+  }
+}

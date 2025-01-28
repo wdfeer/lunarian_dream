@@ -28,7 +28,7 @@ loom {
 	splitEnvironmentSourceSets()
 
 	mods {
-		"lunatic" {
+		"lunarian_dream" {
 			sourceSet sourceSets.main
 			sourceSet sourceSets.client
 		}

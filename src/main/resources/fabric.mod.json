@@ -1,28 +1,29 @@
 {
 	"schemaVersion": 1,
-	"id": "lunatic",
+	"id": "lunarian_dream",
 	"version": "${version}",
-	"name": "Lunatic Kingdom",
-	"description": "Dream World from Touhou 15 ~ Legacy of Lunatic Kingdom",
+	"name": "Lunarian Dream",
+	"description": "Dream World from Touhou 15 ~ Legacy of LunarianDream Kingdom",
 	"authors": [
 		"wdfeer"
 	],
 	"contact": {
-		"sources": "https://github.com/wdfeer/lunatic"
+		"sources": "https://github.com/wdfeer/lunarian_dream"
+		"issues": "https://github.com/wdfeer/lunarian_dream/issues"
 	},
 	"license": "GPL-3.0",
-	"icon": "assets/lunatic/icon.png",
+	"icon": "assets/lunarian_dream/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
 			{
-				"value": "wdfeer.lunatic.Lunatic",
+				"value": "wdfeer.lunarian_dream.LunarianDream",
 				"adapter": "kotlin"
 			}
 		],
 		"client": [
 			{
-				"value": "wdfeer.lunatic.LunaticClient",
+				"value": "wdfeer.lunarian_dream.LunarianClient",
 				"adapter": "kotlin"
 			}
 		]

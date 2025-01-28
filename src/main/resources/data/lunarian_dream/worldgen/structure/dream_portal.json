@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:jigsaw",
+  "biomes": "minecraft:deep_ocean",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "beard_box",
+  "start_pool": "lunarian_dream:dream_portal",
+  "size": 1,
+  "start_height": {
+    "absolute": 200
+  },
+  "max_distance_from_center": 40,
+  "use_expansion_hack": false
+}
