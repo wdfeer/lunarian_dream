@@ -12,6 +12,6 @@ object LunarianDream : ModInitializer {
         initializeBlocks()
         initializeDoremyEntity()
         initializeDreamWorld()
-        logger.info("LunarianDream loaded!")
+        logger.info("Lunarian Dream loaded!")
     }
 }

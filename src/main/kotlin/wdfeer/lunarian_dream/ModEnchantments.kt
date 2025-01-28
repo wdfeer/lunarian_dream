@@ -36,24 +36,20 @@ private object DreamRepair : Enchantment(Rarity.VERY_RARE, EnchantmentTarget.BRE
     override fun isTreasure(): Boolean = true
 
     override fun canAccept(other: Enchantment?): Boolean {
-	return super.canAccept(other) && other !is MendingEnchantment
+        return super.canAccept(other) && other !is MendingEnchantment
     }
 }
 
 private object MentalBreak : Enchantment(Rarity.VERY_RARE, EnchantmentTarget.WEAPON, arrayOf()) {
     override fun isTreasure(): Boolean = true
 
-    override fun canAccept(other: Enchantment?): Boolean {
-	return super.canAccept(other) &&
-		other != Enchantments.SHARPNESS &&
-		other != Enchantments.SMITE &&
-		other != Enchantments.BANE_OF_ARTHROPODS
-    }
+    override fun canAccept(other: Enchantment?): Boolean = super.canAccept(other) &&
+            other != Enchantments.SHARPNESS &&
+            other != Enchantments.SMITE &&
+            other != Enchantments.BANE_OF_ARTHROPODS
 
-    override fun getAttackDamage(level: Int, group: EntityGroup): Float {
- 	return when (group) {
-		EntityGroup.UNDEAD -> 0f
-		else -> 4f
-	}
+    override fun getAttackDamage(level: Int, group: EntityGroup): Float = when (group) {
+        EntityGroup.UNDEAD -> 0f
+        else -> 4f
     }
 }
