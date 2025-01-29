@@ -1,4 +1,4 @@
-package wdfeer.lunarian_dream
+package wdfeer.lunarian_dream.block
 
 import net.fabricmc.fabric.api.`object`.builder.v1.block.FabricBlockSettings
 import net.minecraft.block.Block
@@ -10,6 +10,8 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
+import wdfeer.lunarian_dream.LunarianDream
+import wdfeer.lunarian_dream.world.teleportToDreamWorld
 
 fun LunarianDream.initializeBlocks() {
     Registry.register(Registries.BLOCK, Identifier(MOD_ID, "dream_portal"), DreamPortal)

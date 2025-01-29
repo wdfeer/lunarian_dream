@@ -11,6 +11,7 @@ import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.command.argument.EntityAnchorArgumentType
 import net.minecraft.util.Identifier
+import wdfeer.lunarian_dream.entity.Doremy
 import java.util.*
 
 class DoremyRenderer(private val ctx: EntityRendererFactory.Context?) : EntityRenderer<Doremy>(ctx) {

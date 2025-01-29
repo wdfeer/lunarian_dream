@@ -1,4 +1,4 @@
-package wdfeer.lunarian_dream
+package wdfeer.lunarian_dream.world
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
@@ -26,7 +26,8 @@ import net.minecraft.world.StructureWorldAccess
 import net.minecraft.world.gen.feature.Feature
 import net.minecraft.world.gen.feature.FeatureConfig
 import net.minecraft.world.gen.feature.util.FeatureContext
-import wdfeer.lunarian_dream.DungeonFeature.Companion.SIZE
+import wdfeer.lunarian_dream.LunarianDream
+import wdfeer.lunarian_dream.world.DungeonFeature.Companion.SIZE
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.random.Random
