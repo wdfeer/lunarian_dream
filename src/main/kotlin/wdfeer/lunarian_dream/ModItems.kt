@@ -5,9 +5,10 @@ import net.minecraft.item.Item
 import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
 import net.minecraft.util.Identifier
+import net.minecraft.util.Rarity
 
 fun LunarianDream.initializeItems() {
     Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "nightmare_shard"), NightmareShard)
 }
 
-private object NightmareShard : Item(FabricItemSettings())
+private object NightmareShard : Item(FabricItemSettings().rarity(Rarity.RARE).fireproof())
