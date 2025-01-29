@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "lunarian_dream:item/nightmare_shard"
+  }
+}
