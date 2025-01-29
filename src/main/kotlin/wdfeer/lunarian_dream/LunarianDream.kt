@@ -10,6 +10,7 @@ object LunarianDream : ModInitializer {
     override fun onInitialize() {
         initializeEnchantments()
         initializeBlocks()
+        initializeItems()
         initializeDoremyEntity()
         initializeDreamWorld()
         logger.info("Lunarian Dream loaded!")

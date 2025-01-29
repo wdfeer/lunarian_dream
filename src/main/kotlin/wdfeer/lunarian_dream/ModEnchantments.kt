@@ -12,9 +12,9 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 import net.minecraft.entity.EntityGroup
 
-fun initializeEnchantments() {
-    Registry.register(Registries.ENCHANTMENT, Identifier.of(LunarianDream.MOD_ID, "dream_repair"), DreamRepair)
-    Registry.register(Registries.ENCHANTMENT, Identifier.of(LunarianDream.MOD_ID, "mental_break"), MentalBreak)
+fun LunarianDream.initializeEnchantments() {
+    Registry.register(Registries.ENCHANTMENT, Identifier.of(MOD_ID, "dream_repair"), DreamRepair)
+    Registry.register(Registries.ENCHANTMENT, Identifier.of(MOD_ID, "mental_break"), MentalBreak)
 }
 
 private object DreamRepair : Enchantment(Rarity.VERY_RARE, EnchantmentTarget.BREAKABLE, arrayOf()) {

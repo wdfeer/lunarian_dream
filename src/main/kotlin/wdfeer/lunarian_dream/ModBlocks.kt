@@ -11,8 +11,8 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 
-fun initializeBlocks() {
-    Registry.register(Registries.BLOCK, Identifier(LunarianDream.MOD_ID, "dream_portal"), DreamPortal)
+fun LunarianDream.initializeBlocks() {
+    Registry.register(Registries.BLOCK, Identifier(MOD_ID, "dream_portal"), DreamPortal)
 }
 
 object DreamPortal : Block(
@@ -22,9 +22,6 @@ object DreamPortal : Block(
         .hardness(Float.POSITIVE_INFINITY)
         .resistance(Float.POSITIVE_INFINITY)
         .luminance { 15 }) {
-    init {
-    }
-
     override fun onSteppedOn(world: World?, pos: BlockPos?, state: BlockState?, entity: Entity?) {
         if (entity is ServerPlayerEntity) entity.teleportToDreamWorld()
     }
