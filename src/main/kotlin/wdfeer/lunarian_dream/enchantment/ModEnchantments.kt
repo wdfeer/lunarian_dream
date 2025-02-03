@@ -1,4 +1,4 @@
-package wdfeer.lunarian_dream
+package wdfeer.lunarian_dream.enchantment
 
 import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents
 import net.minecraft.enchantment.Enchantment
@@ -11,10 +11,11 @@ import net.minecraft.registry.Registry
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 import net.minecraft.entity.EntityGroup
+import wdfeer.lunarian_dream.LunarianDream
 
-fun initializeEnchantments() {
-    Registry.register(Registries.ENCHANTMENT, Identifier.of(LunarianDream.MOD_ID, "dream_repair"), DreamRepair)
-    Registry.register(Registries.ENCHANTMENT, Identifier.of(LunarianDream.MOD_ID, "mental_break"), MentalBreak)
+fun LunarianDream.initializeEnchantments() {
+    Registry.register(Registries.ENCHANTMENT, Identifier.of(MOD_ID, "dream_repair"), DreamRepair)
+    Registry.register(Registries.ENCHANTMENT, Identifier.of(MOD_ID, "mental_break"), MentalBreak)
 }
 
 private object DreamRepair : Enchantment(Rarity.VERY_RARE, EnchantmentTarget.BREAKABLE, arrayOf()) {

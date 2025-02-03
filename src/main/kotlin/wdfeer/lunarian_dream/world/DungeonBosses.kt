@@ -1,4 +1,4 @@
-package wdfeer.lunarian_dream
+package wdfeer.lunarian_dream.world
 
 import net.minecraft.enchantment.Enchantments
 import net.minecraft.entity.EntityType

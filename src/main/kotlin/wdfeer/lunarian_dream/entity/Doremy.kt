@@ -1,4 +1,4 @@
-package wdfeer.lunarian_dream
+package wdfeer.lunarian_dream.entity
 
 import com.google.common.collect.ImmutableSet
 import net.minecraft.entity.Entity
@@ -17,6 +17,7 @@ import net.minecraft.util.Hand
 import net.minecraft.util.Identifier
 import net.minecraft.world.World
 import org.ladysnake.blabber.Blabber
+import wdfeer.lunarian_dream.LunarianDream
 
 fun LunarianDream.initializeDoremyEntity() {
     Registry.register(Registries.ENTITY_TYPE, Identifier.of(MOD_ID, "doremy"), DoremyEntityType)

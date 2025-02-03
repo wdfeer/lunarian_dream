@@ -1,4 +1,4 @@
-package wdfeer.lunarian_dream
+package wdfeer.lunarian_dream.world
 
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
 import net.minecraft.entity.LivingEntity
@@ -15,6 +15,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.Identifier
 import net.minecraft.world.World
+import wdfeer.lunarian_dream.LunarianDream
 import wdfeer.lunarian_dream.LunarianDream.MOD_ID
 
 const val DREAM_WORLD_PATH = "dream_world"

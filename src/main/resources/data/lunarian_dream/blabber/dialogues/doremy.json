@@ -16,6 +16,17 @@
           "text": "Can you teleport me home?"
         },
         {
+          "next": "reward",
+          "text": "[Show Nightmare Shard]",
+          "only_if": {
+            "predicate": "lunarian_dream:has_nightmare_shard",
+            "when_unavailable": {
+              "display": "hidden",
+              "message": ""
+            }
+          }
+        },
+        {
           "next": "you_have_chosen_death",
           "text": "[Attack her]"
         }
@@ -81,6 +92,24 @@
           "text": "I see."
         }
       ]
+    },
+    "reward": {
+      "text": "Oh? You’ve conquered a nightmare? Impressive. I suppose I should reward you.",
+      "action": {
+        "type": "blabber:command",
+        "value": "/function lunarian_dream:doremy_reward"
+      },
+      "choices": [
+        {
+          "next": "end",
+          "text": "[End Dialogue]"
+        }
+      ],
+      "type": "default"
+    },
+    "end": {
+      "text": "",
+      "type": "end_dialogue"
     }
   },
   "layout": {
