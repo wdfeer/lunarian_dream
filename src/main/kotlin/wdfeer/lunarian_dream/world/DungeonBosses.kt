@@ -92,23 +92,22 @@ val bossTypes = run {
             multiplyMaxHp(3.0)
             addStatusEffect(StatusEffectInstance(StatusEffects.REGENERATION, Int.MAX_VALUE, 3))
         },
-        BossType(EntityType.CAVE_SPIDER, 3) {
-            multiplyMaxHp(2.0)
+        BossType(EntityType.SILVERFISH, 3) {
+            multiplyMaxHp(8.0)
             multiplySpeed(1.4)
             addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, Int.MAX_VALUE))
             addStatusEffect(StatusEffectInstance(StatusEffects.REGENERATION, Int.MAX_VALUE, 1))
+            addStatusEffect(StatusEffectInstance(StatusEffects.STRENGTH, Int.MAX_VALUE, 1))
         },
-        BossType(EntityType.SPIDER, 1) {
-            multiplyMaxHp(12.0)
+        BossType(EntityType.DROWNED, 2) {
+            multiplyMaxHp(2.0)
             multiplySpeed(1.25)
-            getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE)?.addPersistentModifier(
-                EntityAttributeModifier(
-                    "Dream World Dungeon Boss Damage",
-                    4.0,
-                    EntityAttributeModifier.Operation.MULTIPLY_TOTAL
-                )
-            )
-            addStatusEffect(StatusEffectInstance(StatusEffects.REGENERATION, Int.MAX_VALUE, 0, true, true))
+            setStackInHand(
+                Hand.MAIN_HAND, ItemStack(Items.TRIDENT).apply {
+                    addEnchantment(Enchantments.IMPALING, 2)
+                })
+            addStatusEffect(StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, Int.MAX_VALUE, 0))
+            addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, Int.MAX_VALUE, 0))
         }
     )
 }
