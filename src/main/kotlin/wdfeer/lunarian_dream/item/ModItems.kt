@@ -10,6 +10,8 @@ import wdfeer.lunarian_dream.LunarianDream
 
 fun LunarianDream.initializeItems() {
     Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "nightmare_shard"), NightmareShard)
+    Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "gravity_controller"), GravityController)
 }
 
 private object NightmareShard : Item(FabricItemSettings().rarity(Rarity.RARE).fireproof())
+private object GravityController : Item(FabricItemSettings().rarity(Rarity.RARE).fireproof())
