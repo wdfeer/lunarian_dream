@@ -105,11 +105,16 @@ private fun getHollowCubePositions(origin: BlockPos): List<BlockPos> =
     }
 
 private fun DungeonGenerator.createHollowCube() {
-    val hollowCube: List<BlockPos> = getHollowCubePositions(origin).let {
-        // make door
-        it.minus(it.random())
+    val cube = getHollowCubePositions(origin)
+    val obsidians = cube.shuffled().take(16)
+
+    obsidians.forEach { pos ->
+        worldAccess.setBlockState(pos, Blocks.OBSIDIAN.defaultState, Block.FORCE_STATE)
     }
-    for (pos in hollowCube) worldAccess.setBlockState(pos, block.defaultState, Block.FORCE_STATE)
+
+    cube.minus(obsidians.toSet()).forEach { pos ->
+        worldAccess.setBlockState(pos, block.defaultState, Block.FORCE_STATE)
+    }
 }
 
 private fun DungeonGenerator.createSpawners() {
