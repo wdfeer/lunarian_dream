@@ -8,10 +8,12 @@ import net.minecraft.block.entity.ChestBlockEntity
 import net.minecraft.block.entity.MobSpawnerBlockEntity
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.mob.HostileEntity
+import net.minecraft.entity.mob.Monster
 import net.minecraft.registry.Registries
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Vec3i
 import net.minecraft.world.ChunkRegion
 import net.minecraft.world.StructureWorldAccess
 import net.minecraft.world.gen.feature.Feature
@@ -49,24 +51,26 @@ class DungeonFeature :
 
     companion object {
         fun tryDestroyDungeon(world: ServerWorld, pos: BlockPos) {
-            // check if in dungeon, doesn't support feature config
-//            if (world.getBlockState(pos.withY(pos.y / 16 * 16)).block != Blocks.BEDROCK) return
-
             val origin = run {
                 val chunkPos = world.getWorldChunk(pos).pos
                 BlockPos(chunkPos.x * 16, pos.y / 16 * 16, chunkPos.z * 16)
             }
-            // check if dungeon contains enemies
-//            if (world.iterateEntities().any { entity ->
-//                    entity is HostileEntity &&
-//                            entity.blockPos.subtract(origin.run { Vec3i(x, y, z) })
-//                                .run {
-//                                    // position within 16x16x16 cube
-//                                    listOf(x, y, z).all { it < 16 }
-//                                }
-//                }) return
 
-            for (p in getHollowCubePositions(origin)) {
+            // check if dungeon contains enemies
+            val entityInCube = world.iterateEntities().firstOrNull { entity ->
+                (entity is HostileEntity || entity is Monster) &&
+                        entity.isAlive &&
+                        entity.blockPos.subtract(origin.run { Vec3i(x, y, z) })
+                            .run {
+                                // position within 16x16x16 cube
+                                listOf(x, y, z).all { it in 1..15 }
+                            }
+            }
+            if (entityInCube != null) return
+
+            for (p in getHollowCubePositions(origin).filter {
+                world.getBlockState(it).block == Blocks.BEDROCK
+            }) {
                 world.breakBlock(p, true)
             }
         }
