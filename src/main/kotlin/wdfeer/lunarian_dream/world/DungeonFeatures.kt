@@ -12,7 +12,6 @@ import net.minecraft.registry.Registries
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.Vec3i
 import net.minecraft.world.ChunkRegion
 import net.minecraft.world.StructureWorldAccess
 import net.minecraft.world.gen.feature.Feature
@@ -39,7 +38,7 @@ class DungeonFeature :
         if (Random.nextFloat() > 0.1f) return false
         val origin = context.origin.withY((16 until context.world.topY step 16).toList().random())
 
-        val generator = DungeonGenerator(context.world, origin, context.config)
+        val generator = DungeonGenerator(context.world, origin, Registries.BLOCK[context.config.outerBlock])
         generator.createHollowCube()
         generator.createSpawners()
         generator.createChests()
@@ -51,73 +50,60 @@ class DungeonFeature :
     companion object {
         fun tryDestroyDungeon(world: ServerWorld, pos: BlockPos) {
             // check if in dungeon, doesn't support feature config
-            if (world.getBlockState(pos.withY(pos.y / 16 * 16)).block != Blocks.BEDROCK) return
+//            if (world.getBlockState(pos.withY(pos.y / 16 * 16)).block != Blocks.BEDROCK) return
 
-            val origin = pos.run { BlockPos(x / 16 * 16, y / 16 * 16, z / 16 * 16) }
+            val origin = run {
+                val chunkPos = world.getWorldChunk(pos).pos
+                BlockPos(chunkPos.x * 16, pos.y / 16 * 16, chunkPos.z * 16)
+            }
             // check if dungeon contains enemies
-            if (world.iterateEntities().any { entity ->
-                    entity is HostileEntity &&
-                            entity.blockPos.subtract(origin.run { Vec3i(x, y, z) })
-                                .run {
-                                    // position within 16x16x16 cube
-                                    listOf(x, y, z).all { it < 16 }
-                                }
-                }) return
+//            if (world.iterateEntities().any { entity ->
+//                    entity is HostileEntity &&
+//                            entity.blockPos.subtract(origin.run { Vec3i(x, y, z) })
+//                                .run {
+//                                    // position within 16x16x16 cube
+//                                    listOf(x, y, z).all { it < 16 }
+//                                }
+//                }) return
 
-            buildList {
-                for (a in 1 until SIZE) {
-                    for (b in 1 until SIZE) {
-                        run { // Top and Bottom
-                            val point = origin.east(a).north(b)
-                            add(point)
-                            add(point.up(SIZE))
-                        }
-                        run { // East and West
-                            val point = origin.up(a).north(b)
-                            add(point)
-                            add(point.east(SIZE))
-                        }
-                        run { // North and South
-                            val point = origin.up(a).east(b)
-                            add(point)
-                            add(point.north(SIZE))
-                        }
-                    }
-                }
-            }.forEach { world.setBlockState(it, Blocks.AIR.defaultState, Block.FORCE_STATE) }
+            for (p in getHollowCubePositions(origin)) {
+                world.breakBlock(p, true)
+            }
         }
     }
 }
 
 private data class DungeonGenerator(
-    val worldAccess: StructureWorldAccess, val origin: BlockPos, val config: DungeonFeatureConfig
+    val worldAccess: StructureWorldAccess, val origin: BlockPos, val block: Block
 )
 
-private fun DungeonGenerator.createHollowCube() {
-    val block = Registries.BLOCK[config.outerBlock]
-    val hollowCube: List<BlockPos> = buildList {
+private fun getHollowCubePositions(origin: BlockPos): List<BlockPos> =
+    buildList {
         for (a in 1 until SIZE) {
             for (b in 1 until SIZE) {
                 run { // Top and Bottom
-                    val point = origin.east(a).north(b)
+                    val point = origin.east(a).south(b)
                     add(point)
                     add(point.up(SIZE))
                 }
                 run { // East and West
-                    val point = origin.up(a).north(b)
+                    val point = origin.up(a).south(b)
                     add(point)
                     add(point.east(SIZE))
                 }
-                run { // North and South
+                run { // South and North
                     val point = origin.up(a).east(b)
                     add(point)
-                    add(point.north(SIZE))
+                    add(point.south(SIZE))
                 }
             }
         }
+    }
 
-        // Make door
-        remove(random())
+private fun DungeonGenerator.createHollowCube() {
+    val hollowCube: List<BlockPos> = getHollowCubePositions(origin).let {
+        // make door
+        it.minus(it.random())
     }
     for (pos in hollowCube) worldAccess.setBlockState(pos, block.defaultState, Block.FORCE_STATE)
 }
@@ -129,7 +115,7 @@ private fun DungeonGenerator.createSpawners() {
     ).random()
     repeat(6) {
         val entityType = if (it % 2 == 0) entityTypes.first else entityTypes.second
-        val spawnerPos = origin.up().east(Random.nextInt(2 until SIZE - 1)).north(Random.nextInt(2 until SIZE - 1))
+        val spawnerPos = origin.up().east(Random.nextInt(2 until SIZE - 1)).south(Random.nextInt(2 until SIZE - 1))
         worldAccess.setBlockState(spawnerPos, Blocks.SPAWNER.defaultState, Block.FORCE_STATE)
         val blockEntity = worldAccess.getBlockEntity(spawnerPos)
         if (blockEntity is MobSpawnerBlockEntity) {
@@ -140,7 +126,7 @@ private fun DungeonGenerator.createSpawners() {
 
 private fun DungeonGenerator.createChests() {
     repeat(2) {
-        val chestPos = origin.up().east(Random.nextInt(2 until SIZE - 1)).north(Random.nextInt(2 until SIZE - 1))
+        val chestPos = origin.up().east(Random.nextInt(2 until SIZE - 1)).south(Random.nextInt(2 until SIZE - 1))
         worldAccess.setBlockState(chestPos, Blocks.CHEST.defaultState, Block.FORCE_STATE)
         val blockEntity = worldAccess.getBlockEntity(chestPos)
         if (blockEntity is ChestBlockEntity) {
@@ -159,7 +145,7 @@ private fun DungeonGenerator.createBoss() {
         }?.apply {
             setPersistent()
             setPosition(
-                origin.up(2).east(Random.nextInt(2 until SIZE - 1)).north(Random.nextInt(2 until SIZE - 1))
+                origin.up(2).east(Random.nextInt(2 until SIZE - 1)).south(Random.nextInt(2 until SIZE - 1))
                     .toCenterPos()
             )
         }
