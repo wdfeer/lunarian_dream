@@ -13,7 +13,7 @@ fun LunarianDream.initializeDreamCatcherProjectile() {
     Registry.register(Registries.ENTITY_TYPE, Identifier.of(MOD_ID, ID), type)
 }
 
-private const val ID = "danmaku_projectile"
+private const val ID = "dream_catcher_projectile"
 private val type: EntityType<DreamCatcherProjectile> =
     EntityType.Builder.create({ _, world -> DreamCatcherProjectile(world) }, SpawnGroup.MISC).build(ID)
 
