@@ -32,6 +32,12 @@ fun LunarianDream.initializeDreamWorld() {
 private fun LunarianDream.initializeFeatures() {
     Registry.register(Registries.FEATURE, Identifier.of(MOD_ID, "dream_grid"), GridFeature())
     Registry.register(Registries.FEATURE, Identifier.of(MOD_ID, "dream_dungeon"), DungeonFeature())
+
+    ServerLivingEntityEvents.AFTER_DEATH.register { entity, _ ->
+        if (entity.world.registryKey == dreamWorldKey) {
+            DungeonFeature.tryDestroyDungeon(entity.world as? ServerWorld ?: return@register, entity.blockPos)
+        }
+    }
 }
 
 private fun initializeTeleportation() =
@@ -51,12 +57,7 @@ private fun initializeTeleportation() =
         } else true
     }
 
-fun MinecraftServer.getDreamWorld(): ServerWorld = getWorld(
-    RegistryKey.of(
-        RegistryKeys.WORLD,
-        Identifier.of(MOD_ID, DREAM_WORLD_PATH)
-    )
-)!! // Must be registered
+fun MinecraftServer.getDreamWorld(): ServerWorld = getWorld(dreamWorldKey)!! // Must be registered
 
 fun ServerPlayerEntity.teleportToDreamWorld() {
     teleport(
