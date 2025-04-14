@@ -15,15 +15,16 @@ The list is supposed to be in the order of descending severity/urgency (also con
 2. **Better ways of teleporting to the Dream World.**
   - The current methods (dying in bed or finding a rare cube structure in the sky) are functional but
     don't feel intuitive or immersive.
-3. **Unique items or blocks, as a potential reward in the dungeons.**
+3. **Better Doremy dialogue and outcomes.**
+4. **Unique items or blocks, as a potential reward in the dungeons.**
   - Currently, compared to a vanilla dungeon such as the ocean temple, the two unique enchantments
     probably provide enough exploration value in a vanilla context.
   - The illegally enchanted loot that can currently be found, whilst incentivizing exploring the dungeons,
     feels idk, not immersive?
-4. **Danmaku? Items that let the player shoot danmaku projectiles and maybe enemies/blocks shooting them at the player.**
+5. **Danmaku? Items that let the player shoot danmaku projectiles and maybe enemies/blocks shooting them at the player.**
   - I wouldn't call this necessary but it would be quite cool.
-5. **More/Better structures (dungeons) in the Dream World.**
-6. **Generally more Touhou stuff, since currently the only relation to Touhou is Doremy and the name of the dimension.**
-7. **Unique enemies.**
-8. **More music, e.g. dungeon music or Doremy music.**
-9. **Maybe, big maybe: Bosses.**
+6. **More/Better structures (dungeons) in the Dream World.**
+7. **Generally more Touhou stuff, since currently the only relation to Touhou is Doremy and the name of the dimension.**
+8. **Unique enemies.**
+9. **More music, e.g. dungeon music or Doremy music.**
+10. **Maybe, big maybe: Bosses.**
