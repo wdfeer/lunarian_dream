@@ -1,7 +1,6 @@
 # Lunarian Dream
 _Lunarian Dream_ is a Minecraft Fabric mod adding the _Dream World_ dimension
 from Touhou ([Touhou 15 LoLK](https://store.steampowered.com/app/937580/Touhou_Kanjuden__Legacy_of_Lunatic_Kingdom/) in particular).
-Currently, the mod is playable and offers unique content, but is still **underdeveloped**, at least as to what I envisioned.
 
 _Team Shanghai Alice owns Touhou Project and I am not affiliated in any way_ (Gods bless ZUN)
 
