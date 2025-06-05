@@ -1,16 +1,15 @@
 {
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spread_type": "linear",
+    "salt": 0,
+    "separation": 3,
+    "spacing": 12
+  },
   "structures": [
     {
       "structure": "lunarian_dream:dream_portal",
       "weight": 1
     }
-  ],
-  "placement": {
-    "type": "minecraft:concentric_rings",
-    "distance": 6,
-    "spread": 2,
-    "count": 6,
-    "preferred_biomes": "minecraft:deep_ocean",
-    "salt": 0
-  }
+  ]
 }
